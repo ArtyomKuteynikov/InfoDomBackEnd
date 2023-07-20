@@ -1,0 +1,522 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <style>
+        .left {
+            width: 100%;
+        }
+
+        .right {
+            width: 100%;
+        }
+
+        .row {
+            min-width: 100%;
+        }
+
+        .col-lg-4 {
+            display: flex;
+            flex-direction: column;
+        }
+    </style>
+    <div class="pagetitle">
+        <section class="section profile">
+            <div class="row">
+
+                <div class="col-xl-6">
+
+                    <div class="card">
+                        <div class="card-title">
+                            <div class="">
+                                <div style="display: flex;/* padding:5px; */" class="col-xl-12">
+                                    <a type="button" href="{{ url_for('main.all_uk') }}"><i
+                                            style="font-size: 30px" class="bi bi-arrow-left-square"></i></a>
+                                </div>
+
+                            </div>
+                            <div class="row">
+
+                            </div>
+                            Карточка {% if user.org == 1 %} УК {% else %} жильца {% endif %}
+                            {% if user.status == 'blocked' %}
+                                <p style="color: red;font-family: 'Nunito', sans-serif;font-size: 18px;">Пользователь
+                                    заблокирован</p>
+                            {% endif %}
+                        </div>
+                        <div class="col-xl-12"
+                             style="justify-content: center;padding: 0;text-align: center;display: flex;">
+                            {% if user.photo %}
+                                <img src="{{ url_for('static', filename='profile_photos/'+user.photo) }}"
+                                     alt="Profile"
+                                     class="rounded-circle profile-picture" style="height: 120px;"/>
+                                <a href="/delete_picture/{{ user.id }}"
+                                   class="rounded-circle btn btn-info btn-sm profile-delete"><i
+                                        class="bi bi-trash"></i></a>
+                            {% else %}
+                                <h6 class="rounded-circle" style="height: 120px;max-width: 120px;">Нет фото</h6>
+                            {% endif %}
+                        </div>
+                        <form method="post" action="{{ url_for('main.user_post', id=user.id) }}">
+                            <div class="card-body profile-card pt-4 d-flex flex-column align-items-center">
+
+
+                                <div class="row" style="min-width: 100%">
+
+                                    <div class="col-xl-12">
+
+                                        <div class="row">
+                                            <div class="col-xl-4">
+                                                <b>DeviceID</b>
+                                                <p>{{ user.deviceId }}</p>
+                                            </div>
+                                            <div class="col-xl-4">
+                                                <b>Баллы</b>
+                                                <p style="color:green; font-size: 14px">{{ user.points }} баллов</p>
+                                            </div>
+                                            <div class="col-xl-4">
+                                                <b>OS</b>
+                                                <p>{{ user.os }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="input-group mb-3">
+                                    <input type="text" class="form-control" value="{{ user.phone }}"
+                                           placeholder="Телефон"
+                                           aria-describedby="button-addon5" id="addon5" name="phone" data-phone-pattern>
+                                    <div class="input-group-append">
+                                        <button class="btn btn-outline-secondary" type="button" id="button-addon5">X
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="input-group mb-3">
+                                    <input type="text" class="form-control" value="{{ user.name }}" placeholder="Имя"
+                                           aria-describedby="button-addon3" id="addon3" name="name">
+                                    <div class="input-group-append">
+                                        <button class="btn btn-outline-secondary" type="button" id="button-addon3">X
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="input-group mb-3">
+                                    <input type="text" class="form-control" value="{{ user.surname }}"
+                                           placeholder="Фамилия"
+                                           aria-describedby="button-addon4" id="addon4" name="surname">
+                                    <div class="input-group-append">
+                                        <button class="btn btn-outline-secondary" type="button" id="button-addon4">X
+                                        </button>
+                                    </div>
+                                </div>
+                                {% if user.org == 1 %}
+                                    <div class="input-group mb-3">
+                                        <input type="text" class="form-control" name="second_name" id="addon0"
+                                               placeholder="Отчество"
+                                               value="{{ user.second_name }}" aria-describedby="button-addon0">
+                                        <div class="input-group-append">
+                                            <button class="btn btn-outline-secondary" type="button" id="button-addon0">X
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="input-group mb-3">
+                                        <input type="text" class="form-control" name="org_name" id="addon1"
+                                               placeholder="Название организации"
+                                               value="{{ user.org_name }}" aria-describedby="button-addon1">
+                                        <div class="input-group-append">
+                                            <button class="btn btn-outline-secondary" type="button" id="button-addon1">X
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="input-group mb-3">
+                                        <input type="text" class="form-control" value="{{ user.inn }}" placeholder="ИНН"
+                                               aria-describedby="button-addon2" name="inn" id="addon2">
+                                        <div class="input-group-append">
+                                            <button class="btn btn-outline-secondary" type="button" id="button-addon2">X
+                                            </button>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                                <div class="input-group mb-3">
+                                    <select class="form-select" name="jk">
+                                        {% for i in jks %}
+                                            <option value="{{ i.id }}"
+                                                    {% if i.id==user.jk %}selected{% endif %}>{{ i.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="input-group mb-3">
+                                    <input type="text" class="form-control" id="addon6" placeholder="Адрес"
+                                           value="{{ user.address }}" name="address"
+                                           aria-describedby="button-addon6">
+
+                                    <div class="input-group-append">
+                                        <button class="btn btn-outline-secondary" type="button" id="button-addon6">X
+                                        </button>
+                                    </div>
+                                </div>
+                                <table class="table">
+                                    <thead>
+                                    <tr>
+                                        <td>Дата транзакции</td>
+                                        <td>Сумма, РУБ</td>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for i in user_transactions %}
+                                        <tr>
+                                            <td>{{ i.timestamp.strftime('%d.%m.%y') }}</td>
+                                            <td>{{ i.amount }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                                <div class="row">
+                                    <div class="col-xl-5" style="padding: 0;">
+                                        <a href="/connect/{{ user.id }}" style="margin-bottom: 5px"
+                                           class="btn btn-primary left">Связаться</a> <br>
+                                        {% if user.status == 'blocked' %}
+                                            <a href="/unblock/{{ user.id }}" class="btn btn-secondary left">Разблокировать</a>
+                                        {% else %}
+                                            <a href="/block/{{ user.id }}"
+                                               class="btn btn-secondary left">Заблокировать</a>
+                                        {% endif %}
+                                    </div>
+                                    <div class="col-xl-2"></div>
+                                    <div class="col-xl-5" style="padding: 0;">
+                                        <button type="submit" style="margin-bottom: 5px"
+                                                class="btn btn-primary right">Сохранить
+                                        </button>
+                                        <br>
+                                        <a href="/uk/{{ user.id }}"
+                                           class="btn btn-secondary right">Отменить</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+                <div class="col-xl-6">
+
+                    <div class="card">
+                        <div class="card-title left">
+                            Редактировать контактные данные
+                        </div>
+                        <form method="post" action="/additional_uk/{{ user.id }}">
+                            <div class="card-body profile-card pt-4 d-flex flex-column align-items-center xl-12">
+                                <div class="row" style="min-width: 100%">
+                                    <div class="col-lg-4">
+                                        <p class="left">Понедельник</p>
+                                        <div class="input-group mb-3">
+                                            <input type="text" class="form-control" placeholder="Часы работы" name="mon"
+                                                   aria-describedby="button-addon01" id="addon01"
+                                                   value="{{ uk_data.mon }}"
+                                                   data-time-pattern>
+                                            <div class="input-group-append">
+                                                <button class="btn btn-outline-secondary" type="button"
+                                                        id="button-addon01">
+                                                    X
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4">
+                                        <p class="left">Вторник</p>
+                                        <div class="input-group mb-3">
+                                            <input type="text" class="form-control" placeholder="Часы работы" name="tue"
+                                                   aria-describedby="button-addon02" id="addon02"
+                                                   value="{{ uk_data.tue }}"
+                                                   data-time-pattern>
+                                            <div class="input-group-append">
+                                                <button class="btn btn-outline-secondary" type="button"
+                                                        id="button-addon02">
+                                                    X
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4">
+                                        <p class="left">Среда</p>
+                                        <div class="input-group mb-3">
+                                            <input type="text" class="form-control" placeholder="Часы работы" name="wed"
+                                                   aria-describedby="button-addon03" id="addon03"
+                                                   value="{{ uk_data.wed }}"
+                                                   data-time-pattern>
+                                            <div class="input-group-append">
+                                                <button class="btn btn-outline-secondary" type="button"
+                                                        id="button-addon03">
+                                                    X
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row" style="min-width: 100%">
+                                    <div class="col-lg-4">
+                                        <p class="left">Четверг</p>
+                                        <div class="input-group mb-3">
+                                            <input type="text" class="form-control" value="{{ uk_data.thu }}"
+                                                   placeholder="Часы работы" name="thu"
+                                                   aria-describedby="button-addon04" id="addon04" data-time-pattern>
+                                            <div class="input-group-append">
+                                                <button class="btn btn-outline-secondary" type="button"
+                                                        id="button-addon04">
+                                                    X
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4">
+                                        <p class="left">Пятница</p>
+                                        <div class="input-group mb-3">
+                                            <input type="text" class="form-control" value="{{ uk_data.fri }}"
+                                                   placeholder="Часы работы" name="fri"
+                                                   aria-describedby="button-addon05" id="addon05" data-time-pattern>
+                                            <div class="input-group-append">
+                                                <button class="btn btn-outline-secondary" type="button"
+                                                        id="button-addon05">
+                                                    X
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4">
+                                        <p class="left">Суббота</p>
+                                        <div class="input-group mb-3">
+                                            <input type="text" class="form-control" value="{{ uk_data.sat }}"
+                                                   placeholder="Часы работы" name="sat"
+                                                   aria-describedby="button-addon06" id="addon06" data-time-pattern>
+                                            <div class="input-group-append">
+                                                <button class="btn btn-outline-secondary" type="button"
+                                                        id="button-addon06">
+                                                    X
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row" style="min-width: 100%">
+                                    <div class="col-lg-4">
+                                        <p class="left">Воскресенье</p>
+                                        <div class="input-group mb-3">
+                                            <input type="text" class="form-control" value="{{ uk_data.san }}"
+                                                   placeholder="Часы работы" name="san"
+                                                   aria-describedby="button-addon07" id="addon01" data-time-pattern>
+                                            <div class="input-group-append">
+                                                <button class="btn btn-outline-secondary" type="button"
+                                                        id="button-addon07">
+                                                    X
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4" style="opacity: 0">
+                                        <p>Воскресенье</p>
+                                        <div class="input-group mb-3">
+                                            <input type="text" class="form-control" value=""
+                                                   aria-describedby="button-addon7" disabled>
+                                            <div class="input-group-append">
+                                                <button class="btn btn-outline-secondary" type="button"
+                                                        id="button-addon7">X
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4" style="opacity: 0">
+                                        <p>Воскресенье</p>
+                                        <div class="input-group mb-3">
+                                            <input type="text" class="form-control" value=""
+                                                   aria-describedby="button-addon7" disabled>
+                                            <div class="input-group-append">
+                                                <button class="btn btn-outline-secondary" type="button"
+                                                        id="button-addon7">X
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr>
+                                <h6 class="left">Контактные телефоны</h6>
+                                <div class="row " id="phone_1">
+                                    {% for i, j in enumerate(contact_phones) %}
+                                        <div class="input-group mb-3 phone-input">
+                                            <input type="text" class="form-control" placeholder="Сотрудник(должность)"
+                                                   aria-label="Username" name="contact_name_{{ i }}" value="{{ j }}">
+                                            <span class="input-group-text">-</span>
+                                            <input type="text" class="form-control" aria-label="Server"
+                                                   aria-describedby="button-addon11" placeholder="Телефон"
+                                                   name="contact_phone_{{ i }}" value="{{ contact_phones[j] }}"
+                                                   data-phone-pattern>
+                                            <div class="input-group-append">
+
+                                            </div>
+                                            <button class="btn btn-outline-secondary my-delete" type="button"
+                                                    id="button-addon11">
+                                                X
+                                            </button>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                                <a class="right " id="add_phone_1">Добавить</a>
+
+                                <hr>
+                                <h6 class="left">Полезные телефоны</h6>
+                                <div class="row" id="phone_2">
+                                    {% for i, j in enumerate(contact_phones) %}
+                                        <div class="input-group mb-3">
+                                            <input type="text" class="form-control" name="useful_name_{{ i }}"
+                                                   aria-label="Username" placeholder="Служба" value="{{ j }}">
+                                            <span class="input-group-text">-</span>
+                                            <input type="text" class="form-control" aria-label="Server"
+                                                   aria-describedby="button-addon11" placeholder="Телефон"
+                                                   name="useful_phone_{{ i }}" value="{{ useful_phones[j] }}"
+                                                   data-phone-pattern>
+                                            <div class="input-group-append">
+
+                                            </div>
+                                            <button class="btn btn-outline-secondary" type="button" id="button-addon11">
+                                                X
+                                            </button>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                                <a class="right" id="add_phone_2">Добавить</a>
+                                <hr>
+                                <div class="row">
+                                    <div style="" class="col-xl-6">
+                                        <a href="/uk/{{ user.id }}" type="submit"
+                                           class="btn btn-secondary">Сбросить</a>
+                                    </div>
+                                    <div style="  " class="col-xl-6">
+                                        <button type="submit" class="btn btn-primary">Сохранить</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                var eventCalllback = function (e) {
+                    var el = e.target,
+                        clearVal = el.dataset.phoneClear,
+                        pattern = el.dataset.phonePattern,
+                        matrix_def = "+7 (___) ___-__-__",
+                        matrix = pattern ? pattern : matrix_def,
+                        i = 0,
+                        def = matrix.replace(/\D/g, ""),
+                        val = e.target.value.replace(/\D/g, "");
+                    if (clearVal !== 'false' && e.type === 'blur') {
+                        if (val.length < matrix.match(/([\_\d])/g).length) {
+                            e.target.value = '';
+                            return;
+                        }
+                    }
+                    if (def.length >= val.length) val = def;
+                    e.target.value = matrix.replace(/./g, function (a) {
+                        return /[_\d]/.test(a) && i < val.length ? val.charAt(i++) : i >= val.length ? "" : a
+                    });
+                }
+                var phone_inputs = document.querySelectorAll('[data-phone-pattern]');
+                for (let elem of phone_inputs) {
+                    for (let ev of ['input', 'blur', 'focus', 'load']) {
+                        elem.addEventListener(ev, eventCalllback);
+                    }
+                }
+            });
+        </script>
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                var eventCalllback = function (e) {
+                    var el = e.target,
+                        clearVal = el.dataset.phoneClear,
+                        pattern = el.dataset.phonePattern,
+                        matrix_def = "__:__ - __:__",
+                        matrix = pattern ? pattern : matrix_def,
+                        i = 0,
+                        def = matrix.replace(/\D/g, ""),
+                        val = e.target.value.replace(/\D/g, "");
+                    if (clearVal !== 'false' && e.type === 'blur') {
+                        if (val.length < matrix.match(/([\_\d])/g).length) {
+                            e.target.value = '';
+                            return;
+                        }
+                    }
+                    if (def.length >= val.length) val = def;
+                    e.target.value = matrix.replace(/./g, function (a) {
+                        return /[_\d]/.test(a) && i < val.length ? val.charAt(i++) : i >= val.length ? "" : a
+                    });
+                }
+                var phone_inputs = document.querySelectorAll('[data-time-pattern]');
+                for (let elem of phone_inputs) {
+                    for (let ev of ['input', 'blur', 'focus', 'load']) {
+                        elem.addEventListener(ev, eventCalllback);
+                    }
+                }
+            });
+            {% for i in [0, 1, 2, 3, 4, 5, 6, 7] %}
+                document.getElementById("button-addon{{ i }}").onclick = function (e) {
+                    document.getElementById("addon{{ i }}").value = "";
+                };
+            {% endfor %}
+
+            {% for i in ['07', '01', '02', '03', '04', '05', '06'] %}
+                document.getElementById("button-addon{{ i }}").onclick = function (e) {
+                    document.getElementById("addon{{ i }}").value = "";
+                };
+            {% endfor %}
+
+        </script>
+        <script>
+            $(document).ready(function () {
+                var max_fields = 10;
+                var wrapper = $("#phone_1");
+                var add_button = $("#add_phone_1");
+
+                var x = {{ x }};
+                $(add_button).click(function (e) {
+                    e.preventDefault();
+                    if (x < max_fields) {
+                        x++;
+                        $(wrapper).append('<div class="input-group mb-3 phone-input"><input type="text" class="form-control"  name="contact_name_' + x + '" placeholder="Сотрудник(должность)" aria-label="Username"><span class="input-group-text">-</span> <input onchange="eventCalllback()" type="text" class="form-control"  name="contact_phone_' + x + '"  placeholder="Телефон" aria-label="Server"aria-describedby="button-addon11" data-phone-pattern> <div class="input-group-append"> </div><button class="btn btn-outline-secondary my-delete" type="button" id="button-addon11">X </button></div>'); //add input box
+
+                    } else {
+                        alert('Максимум 10 номеров')
+                    }
+                });
+
+                $(wrapper).on("click", ".my-delete", function (e) {
+                    console.log('delete');
+                    e.preventDefault();
+                    $(this).parent('div').remove();
+                    x--;
+                });
+
+                var max_fields2 = 10;
+                var wrapper2 = $("#phone_2");
+                var add_button2 = $("#add_phone_2");
+
+                var y = {{ y }};
+                $(add_button2).click(function (e) {
+                    e.preventDefault();
+                    if (y < max_fields2) {
+                        y++;
+                        $(wrapper2).append('<div class="input-group mb-3 phone-input"><input type="text" class="form-control"  name="useful_name_' + y + '"   placeholder="Служба" aria-label="Username"><span class="input-group-text">-</span> <input onchange="eventCalllback()" type="text" class="form-control"name="useful_phone_' + y + '" placeholder="Телефон" aria-label="Server"aria-describedby="button-addon11" data-phone-pattern> <div class="input-group-append"> </div><button class="btn btn-outline-secondary my-delete" type="button" id="button-addon11">X </button></div>'); //add input box
+
+                    } else {
+                        alert('Максимум 10 номеров')
+                    }
+                });
+
+                $(wrapper2).on("click", ".my-delete", function (e) {
+                    console.log('delete');
+                    e.preventDefault();
+                    $(this).parent('div').remove();
+                    y--;
+                })
+            });
+        </script>
+    </div>
+{% endblock %}

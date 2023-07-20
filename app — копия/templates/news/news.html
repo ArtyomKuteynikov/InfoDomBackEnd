@@ -1,0 +1,262 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <style>
+        form {
+            max-width: fit-content;
+        }
+
+        .card-title {
+            font-size: 16px;
+        }
+
+        .form-control {
+            font-size: 12px;
+        }
+
+        .form-select {
+            font-size: 12px;
+        }
+
+        .btn {
+            font-size: 12px;
+        }
+
+
+        .tab.active {
+            background-color: #5071BF4D !important;
+        }
+
+
+        .tab:hover {
+            background-color: #5071BF4D !important;
+        }
+
+        tr.active {
+            background-color: #5071BF4D !important;
+        }
+
+        p {
+            font-size: 12px;
+        }
+
+
+        tr:hover {
+            background-color: #5071BF4D !important;
+        }
+
+        table {
+            margin-top: 40px;
+        }
+
+        th div {
+            margin-top: -40px;
+            position: absolute;
+        }
+
+        /* design */
+        table {
+            border-collapse: collapse;
+        }
+
+        tr:nth-child(even) {
+            background: #EEE;
+        }
+
+        p.mytabs {
+            font-size: 16px;
+            margin: 1;
+        }
+
+    </style>
+    <h1 class="title">{% if 'news' in request.endpoint %}Новости{% else %} Объявления {% endif %}</h1>
+    <div class="row">
+        <div class="col-lg-3">
+            <div class="card tab {% if 'news' in request.endpoint %} active {% endif %}"
+                 onclick="window.location.href='{{ url_for('main.news') }}'; return false">
+                <div class="">
+                    <p class="mytabs"></p>
+                    <p class="mytabs">Новости</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3">
+            <div class="card tab {% if 'promotions' in request.endpoint %} active {% endif %}"
+                 onclick="window.location.href='{{ url_for('main.promotions') }}'; return false">
+                <div class="">
+                    <p class="mytabs"></p>
+                    <p class="mytabs">Объявления</p>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+
+        <div class="{% if item %}col-xl-8{% else %}col-xl-12{% endif %}">
+            <form method="POST" action="#" class="row">
+                <div class="col-lg-4">
+                    <select class="form-select" id="city" onchange="myFunction_1()">
+                        <option value="ВСЕ" selected>ВСЕ</option>
+                        {% for city in cities %}
+                            <option value="{{ city[0] }}">{{ city[0] }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-lg-4">
+                    <select class="form-select" id="city" onchange="myFunction_1()">
+                        <option value="ВСЕ" selected>ВСЕ</option>
+                        {% for city in jks %}
+                            <option value="{{ city[0] }}">{{ city[0] }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-lg-4">
+                    <select class="form-select" id="city" onchange="myFunction_1()">
+                        <option value="ВСЕ" selected>ВСЕ</option>
+                        {% for city in addresses %}
+                            <option value="{{ city[0] }}">{{ city[0] }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </form>
+            <div class="card">
+                <div class="card-body pt-3">
+                    <div style="overflow-x:auto;">
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th scope="col">ID</th>
+                                <th scope="col">Дата</th>
+                                <th scope="col">Фамилия/Имя</th>
+                                {% if 'news' in request.endpoint %}
+                                    <th scope="col">Организация</th>
+                                    <th scope="col">ИНН</th>
+                                    <th>Заголовок</th>
+                                {% else %}
+                                    <th>Заголовок</th>
+                                    <th>Цена</th>
+                                {% endif %}
+                                <th scope="col">Жилой комплекс</th>
+                                <th scope="col">Статус</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for i in news %}
+                                <tr onclick="window.location.href='{% if 'news' in request.endpoint %}/new/{{ i.id }}{% else %}/promotion/{{ i.id }}{% endif %}'; return false"
+                                    class="{% if str(i.id) == str(user) %}active{% endif %}">
+                                    <td>
+                                        {{ i.id }}
+                                    </td>
+                                    <td>
+                                        {{ datetime.fromtimestamp(i.timestamp).strftime('%d.%m.%y') }}
+                                    </td>
+                                    <td>
+                                        {{ str(User.query.filter_by(id=i.author).first().name + ' ' + User.query.filter_by(id=i.author).first().surname).replace('None None', 'Не задано').replace('None', 'Не задано') }}
+                                    </td>
+                                    {% if 'news' in request.endpoint %}
+                                        <td>{{ User.query.filter_by(id=i.author).first().org_name }}</td>
+                                        <td>{{ User.query.filter_by(id=i.author).first().inn }}</td>
+                                        <td>{{ i.name }}</td>
+                                    {% else %}
+                                        <td>{{ i.name }}</td>
+                                        <td>{{ i.price }}</td>
+                                    {% endif %}
+                                    <td>
+                                        {% if JK.query.filter_by(id=i.jk, moderated=1).first() %}
+                                            {{ JK.query.filter_by(id=i.jk).first().name }}
+                                        {% else %}
+                                            На модерации
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if i.blocked == 0 %}
+                                            Показывается
+                                        {% else %}
+                                            Заблокировано
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% if item %}
+            <div class="col-xl-4">
+
+                <div class="card">
+                    <div class="card-title">
+                        Карточка {% if user_data.org == 1 %} организации {% else %} жильца {% endif %}
+                    </div>
+                    <div class="card-body profile-card pt-4 d-flex flex-column align-items-center">
+                        <div class="row">
+                            <div class="col-xl-3" style="padding: 0;">
+                                {% if user_data.photo %}
+                                    <img src="{{ url_for('static', filename='profile_photos/'+user_data.photo) }}"
+                                         alt="Profile"
+                                         class="rounded-circle" style="height: 60px;"/>
+                                {% else %}
+                                    <h6 class="rounded-circle" style="height: 60px;max-width: 70px;">Нет фото</h6>
+                                {% endif %}
+                            </div>
+                            <div class="col-xl-9">
+                                <p style="color:green">{{ user_data.points }} баллов</p>
+                                <div class="row">
+                                    <div class="col-xl-6">
+                                        <b>DeviceID</b>
+                                        <p>{{ user_data.deviceId }}</p>
+                                    </div>
+                                    <div class="col-xl-6">
+                                        <b>OS</b>
+                                        <p>{{ user_data.os }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% if user_data.org == 1 %}
+                            <input style="margin:5px" type="text" class="form-control" value="{{ user_data.org_name }}">
+                            <input style="margin:5px" type="text" class="form-control" value="{{ user_data.inn }}">
+                        {% endif %}
+                        <input style="margin:5px" type="text" class="form-control" value="{{ user_data.name }}">
+                        <input style="margin:5px" type="text" class="form-control" value="{{ user_data.surname }}">
+                        <input style="margin:5px" type="text" class="form-control"
+                               value="{{ JK.query.filter_by(id=user_data.jk).first().name }}">
+                        <input style="margin:5px" type="text" class="form-control" value="{{ user_data.address }}">
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <td>Дата транзакции</td>
+                                <td>Сумма, РУБ</td>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for i in user_transactions %}
+                                <tr>
+                                    <td>{{ i.timestamp.strftime('%d.%m.%y') }}</td>
+                                    <td>{{ i.amount }}</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                        <div class="row">
+                            <div style="padding:5px" class="col-xl-4">
+                                <a href="user/{{ user_data.id }}" type="submit"
+                                   class="btn btn-primary">Редактировать</a>
+                            </div>
+                            <div style="padding:5px" class="col-xl-4">
+                                <button type="submit" class="btn btn-primary">Связаться</button>
+                            </div>
+                            <div style="padding:5px" class="col-xl-4">
+                                <button type="submit" class="btn btn-danger">Заблокировать</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

@@ -1,0 +1,178 @@
+<!-- templates/stats.html -->
+
+{% extends "base.html" %}
+
+{% block content %}
+    <style>
+        #image {
+            display: none;
+        }
+
+        .my-btn {
+            font-size: 12px;
+        }
+
+        h6 {
+            font-size: 28px !important;
+            color: #012970 !important;
+            font-weight: 700 !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+
+        label {
+            font-size: 15px;
+            font-weight: 600;
+            color: #4154f1;
+            padding: 10px 15px;
+            border-radius: 4px;
+        }
+
+        li .form-control {
+            width: 90%;
+        }
+
+        td {
+            padding: 5px;
+        }
+
+    </style>
+    <section class="section profile">
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card">
+                    <div class="card-title">
+                        <div class="">
+                            <div style="display: flex;/* padding:5px; */" class="col-xl-12">
+                                <a type="button" href="/jk/all"><i
+                                        style="font-size: 30px" class="bi bi-arrow-left-square"></i></a>
+                            </div>
+                        </div>
+                        <div class="row">
+                        </div>
+                        Карточка ЖК
+                    </div>
+                    <form method="post" action="/edit_jk/{{ jk.id }}" enctype='multipart/form-data'>
+                        <div class="card-body profile-card pt-4 d-flex flex-column align-items-center">
+                            <div class="col-xl-3"
+                                 style="justify-content: center;padding: 0;text-align: center;display: flex;margin-bottom: 20px;">
+                                <img src="/static/jk/{{ jk.photo }}" alt="Profile"
+                                     class="rounded-circle profile-picture"
+                                     style="height: 120px;">
+                                <div class="profile-delete">
+                                    <input type="file" name="image" id="image">
+                                    <label for="image" class="rounded-circle btn btn-primary btn-sm" style="margin: 0;">
+                                        <i class="bi bi-upload" id="file"></i></label>
+                                    <a href="#" class="" title="Upload new profile image"></a>
+                                    <a href="/delete_picture_jk/{{ jk.id }}"
+                                       class="rounded-circle btn btn-info btn-sm "><i
+                                            class="bi bi-trash"></i></a>
+                                </div>
+                            </div>
+                            <div class="row" style="min-width: 100%">
+                                <div class="col-xl-12">
+                                    <div class="row">
+                                        <div class="col-xl-6">
+                                            <b>Кол-во жильцов</b>
+                                            <p>{{ num_people }}</p>
+                                        </div>
+                                        <div class="col-xl-6">
+                                            <b>Кол-во организаций</b>
+                                            <p>{{ num_orgs }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-xl-6">
+                                            <b>Кол-во новостей</b>
+                                            <p>{{ num_proms }}</p>
+                                        </div>
+                                        <div class="col-xl-6">
+                                            <b>Кол-во объявлений</b>
+                                            <p>{{ num_news }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="input-group mb-3">
+                                <input type="text" class="form-control" value="{{ jk.name }}" placeholder="Название ЖК"
+                                       aria-describedby="button-addon3" id="addon3" name="name">
+                                <div class="input-group-append">
+                                    <button class="btn btn-outline-secondary" type="button" id="button-addon3">X
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="input-group mb-3">
+                                <input type="text" class="form-control address-input" value="{{ jk.city }}" placeholder="Город"
+                                       aria-describedby="button-addon4" id="addon4" name="city">
+                                <div class="input-group-append">
+                                    <button class="btn btn-outline-secondary" type="button" id="button-addon4">X
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="input-group mb-3">
+                                <ul class="list-group" id="addresses" style="width:100%;">
+                                    {% for address in addresses %}
+                                        <li class="list-group-item d-flex justify-content-between align-items-center input-group">
+                                            <input name="fullName2" type="text" class="form-control address-input" id="fullName"
+                                                   value="{{ address.name }}" required="" placeholder="Адрес">
+                                            <button class="btn btn-outline-secondary remove" type="button">X
+                                            </button>
+                                        </li>
+                                    {% endfor %}
+
+
+                                </ul><!-- End Default List group -->
+
+                            </div>
+                            <div class="row" style="margin: 20px 0;">
+                                <button type="button" id="add_address" class="my-btn btn btn-primary">Добавить</button>
+                            </div>
+                            <div class="row" style="margin: 20px 0;">
+                                <div class="col-xl-12">
+                                    <button type="submit" class="btn btn-primary right">Сохранить
+                                    </button>
+                                    <a href="/jk/{{ jk.id }}" class="btn btn-secondary right">Отменить</a>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </section>
+    <script>
+        $(document).ready(function () {
+            var max_fields = 10;
+            var wrapper = $("#addresses");
+            var add_button = $("#add_address");
+
+            var x = 1;
+            $(add_button).click(function (e) {
+                e.preventDefault();
+                if (x < max_fields) {
+                    x++;
+                    $(wrapper).append('<li class="list-group-item d-flex justify-content-between align-items-center input-group"><input name="fullName' + x + '" type="text" class="form-control address-input" id="fullName" placeholder="Адрес" value="{{ jk.city }}" required><button class="btn btn-outline-secondary remove" type="button" id="button-addon4">X</button></li>'); //add input box
+			add_suggestions();
+                } else {
+                    alert('You Reached the limits')
+                }
+            });
+
+            $(wrapper).on("click", ".remove", function (e) {
+                e.preventDefault();
+                $(this).parent('li').remove();
+                x--;
+            })
+        });
+        {% for i in [3, 4] %}
+            document.getElementById("button-addon{{ i }}").onclick = function (e) {
+                document.getElementById("addon{{ i }}").value = "";
+            };
+        {% endfor %}
+        $("#image").change(function() {
+            $('#file').removeClass("bi-upload").addClass("bi-file-earmark-check-fill");
+        });
+    </script>
+
+{% endblock %}

@@ -1,0 +1,140 @@
+<!-- templates/stats.html -->
+
+{% extends "base.html" %}
+
+{% block content %}
+    <style>
+        h6 {
+            font-size: 28px !important;
+            color: #012970 !important;
+            font-weight: 700 !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+
+        label {
+            font-size: 15px;
+            font-weight: 600;
+            color: #4154f1;
+            padding: 10px 15px;
+            border-radius: 4px;
+        }
+
+        li .form-control {
+            width: 90%;
+        }
+    </style>
+    <section class="section profile">
+        <div class="row">
+
+            <div class="col-xl-8">
+                <div class="card">
+                    <div class="card-body pt-3">
+                        <div class="tab-content pt-2">
+                            <!-- Profile Edit Form -->
+                            <form>
+
+                                <div class="row mb-3">
+                                    <label for="fullName" class="col-md-4 col-lg-4 col-form-label">Название ЖК</label>
+                                    <div class="col-md-8 col-lg-8">
+                                        <input name="fullName" type="text" class="form-control" id="fullName"
+                                               value="{{ jk.name }}">
+                                    </div>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <label for="fullName" class="col-md-4 col-lg-4 col-form-label">Город</label>
+                                    <div class="col-md-8 col-lg-8">
+                                        <input name="fullName" type="text" class="form-control" id="fullName"
+                                               value="{{ jk.city }}">
+                                    </div>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <label for="fullName" class="col-md-4 col-lg-4 col-form-label">Адреса</label>
+                                    <div class="col-md-8 col-lg-8">
+                                        <ul class="list-group" id="addresses">
+                                            {% for i in addresses %}
+                                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                    {{ i.name }}
+                                                    <span class="badge bg-danged rounded-pill">x</span>
+                                                </li>
+                                            {% endfor %}
+                                        </ul><!-- End Default List group -->
+                                        <div>
+
+                                        </div>
+                                        <button type="button" id="add_address" class="btn btn-primary">+</button>
+                                    </div>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <label for="company" class="col-md-4 col-lg-4 col-form-label">Кол-во
+                                        зарегистрированных жильцов</label>
+                                    <div class="col-md-8 col-lg-8">
+                                        <h6>{{ num_people }} человек</h6>
+                                    </div>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <label for="company" class="col-md-4 col-lg-4 col-form-label">Кол-во
+                                        зарегистрированных организаций</label>
+                                    <div class="col-md-8 col-lg-8">
+                                        <h6>{{ num_orgs }} компаний</h6>
+                                    </div>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <label for="company" class="col-md-4 col-lg-4 col-form-label">Кол-во
+                                        объявлений</label>
+                                    <div class="col-md-8 col-lg-8">
+                                        <h6>{{ num_proms }} объявлений</h6>
+                                    </div>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <label for="company" class="col-md-4 col-lg-4 col-form-label">Кол-во
+                                        новостей</label>
+                                    <div class="col-md-8 col-lg-8">
+                                        <h6>{{ num_news }} новостей</h6>
+                                    </div>
+                                </div>
+
+                                <div class="text-center">
+                                    <button type="submit" class="btn btn-primary">Сохранить</button>
+                                </div>
+                            </form><!-- End Profile Edit Form -->
+                        </div><!-- End Bordered Tabs -->
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+    <script>
+        $(document).ready(function () {
+            var max_fields = 10;
+            var wrapper = $("#addresses");
+            var add_button = $("#add_address");
+
+            var x = 1;
+            $(add_button).click(function (e) {
+                e.preventDefault();
+                if (x < max_fields) {
+                    x++;
+                    $(wrapper).append('<li class="list-group-item d-flex justify-content-between align-items-center"><input name="fullName' + x + '" type="text" class="form-control col-lg-10" id="fullName" value="г. {{ jk.city }}" required><a href="#" class="btn btn-danger delete col-lg-2"><span class="badge bg-danged rounded-pill">x</span></a></li>'); //add input box
+                } else {
+                    alert('You Reached the limits')
+                }
+            });
+
+            $(wrapper).on("click", ".delete", function (e) {
+                e.preventDefault();
+                $(this).parent('li').remove();
+                x--;
+            })
+        });
+    </script>
+
+{% endblock %}

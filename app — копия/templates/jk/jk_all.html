@@ -1,0 +1,279 @@
+<!-- templates/stats.html -->
+
+{% extends "base.html" %}
+
+{% block content %}
+    <style>
+        .list-group {
+            max-height: 50vh;
+            overflow: auto;
+        }
+
+        .card-title {
+            font-size: 16px;
+        }
+
+        .form-control {
+            font-size: 12px;
+        }
+
+        .form-select {
+            font-size: 12px;
+        }
+
+        .btn {
+            font-size: 12px;
+        }
+
+
+        .tab.active {
+            color: #000;
+            background-color: #5071BF4D !important;
+        }
+
+
+        .tab:hover {
+            background-color: #5071BF4D !important;
+        }
+
+        tr.active {
+            background-color: #5071BF4D !important;
+        }
+
+        p {
+            font-size: 12px;
+        }
+
+
+        tr:hover {
+            background-color: #5071BF4D !important;
+        }
+
+        table {
+            margin-top: 40px;
+        }
+
+        th div {
+            margin-top: -40px;
+            position: absolute;
+        }
+
+        /* design */
+        table {
+            border-collapse: collapse;
+        }
+
+        tr:nth-child(even) {
+            background: #EEE;
+        }
+
+        p.mytabs {
+            font-size: 16px;
+            margin: 1;
+        }
+
+    </style>
+    <div class="row">
+        <div class="{% if jk %}col-lg-6{% endif %}">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Жилищные комплексы</h5>
+
+                    <!-- List group with custom content -->
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <input onkeyup="myFunction()" id="jk" type="text" class="form-control"
+                                   placeholder="Введите название ЖК" list="jk_name">
+                            <datalist id="jk_name">
+                                {% for jk_ in jks %}
+                                    <option value="{{ jk_.name }}"></option>
+                                {% endfor %}
+                            </datalist>
+                        </div>
+                        <div class="col-lg-6">
+                            <select class="form-select" id="city" onchange="myFunction_1()">
+                                <option value="ВСЕ" selected>ВСЕ</option>
+                                {% for city in cities %}
+                                    <option value="{{ city[0] }}">{{ city[0] }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <ol class="list-group list-group-numbered" id="jk-list">
+                        {% for jk_ in jks %}
+                            <a href="/jk/all?jk={{ jk_.id }}">
+                                <li class="tab list-group-item justify-content-between align-items-start
+                                        {% if jk %}{% if jk_.id==jk.id %}active{% endif %}{% endif %}">
+                                    <div class="ms-2 me-auto">
+                                        <div class="fw-bold">{{ jk_.name }}</div>
+                                        <div class="my-class">{{ jk_.city }}</div>
+                                    </div>
+                                </li>
+                            </a>
+                        {% endfor %}
+                    </ol><!-- End with custom content -->
+                    <ol class="list-group list-group-numbered" id="jk-list">
+                        <li>
+                            <a href="{{ url_for('main.jk_add') }}" class="btn btn-primary">Добавить</a>
+                        </li>
+                    </ol>
+
+                </div>
+            </div>
+        </div>
+        {% if jk %}
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="card-body pt-3">
+                        <div class="tab-content pt-2">
+                            <!-- Profile Edit Form -->
+                            <form>
+
+                                <div class="row mb-3">
+                                    <label for="fullName" class="col-md-4 col-lg-4 col-form-label">Название ЖК</label>
+                                    <div class="col-md-8 col-lg-8">
+                                        <input name="fullName" type="text" class="form-control" id="fullName"
+                                               value="{{ jk.name }}">
+                                    </div>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <label for="fullName" class="col-md-4 col-lg-4 col-form-label">Город</label>
+                                    <div class="col-md-8 col-lg-8">
+                                        <input name="fullName" type="text" class="form-control" id="fullName"
+                                               value="{{ jk.city }}">
+                                    </div>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <label for="fullName" class="col-md-4 col-lg-4 col-form-label">Адреса</label>
+                                    <div class="col-md-8 col-lg-8">
+                                        <ul class="list-group" id="addresses">
+                                            {% for i in addresses %}
+                                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                    {{ i.name }}
+                                                    <span class="badge bg-danged rounded-pill">x</span>
+                                                </li>
+                                            {% endfor %}
+                                        </ul><!-- End Default List group -->
+                                        <div>
+
+                                        </div>
+                                        <button type="button" id="add_address" class="btn btn-primary">+</button>
+                                    </div>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <label for="company" class="col-md-4 col-lg-4 col-form-label">Кол-во
+                                        зарегистрированных жильцов</label>
+                                    <div class="col-md-8 col-lg-8">
+                                        <h6>{{ num_people }} человек</h6>
+                                    </div>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <label for="company" class="col-md-4 col-lg-4 col-form-label">Кол-во
+                                        зарегистрированных организаций</label>
+                                    <div class="col-md-8 col-lg-8">
+                                        <h6>{{ num_orgs }} компаний</h6>
+                                    </div>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <label for="company" class="col-md-4 col-lg-4 col-form-label">Кол-во
+                                        объявлений</label>
+                                    <div class="col-md-8 col-lg-8">
+                                        <h6>{{ num_proms }} объявлений</h6>
+                                    </div>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <label for="company" class="col-md-4 col-lg-4 col-form-label">Кол-во
+                                        новостей</label>
+                                    <div class="col-md-8 col-lg-8">
+                                        <h6>{{ num_news }} новостей</h6>
+                                    </div>
+                                </div>
+
+                                <div class="text-center">
+                                    <button type="submit" class="btn btn-primary">Сохранить</button>
+                                </div>
+                            </form><!-- End Profile Edit Form -->
+                        </div><!-- End Bordered Tabs -->
+
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+    <script>
+        function myFunction() {
+            var input, filter, ul, li, a, i, txtValue;
+            input = document.getElementById("jk");
+            filter = input.value.toUpperCase();
+            ul = document.getElementById("jk-list");
+            li = ul.getElementsByTagName("li");
+            for (i = 0; i < li.length; i++) {
+                a = li[i].getElementsByClassName("fw-bold")[0];
+
+                txtValue = a.textContent || a.innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    li[i].style.setProperty('display', 'block', 'important');
+                } else {
+                    li[i].style.setProperty('display', 'none', 'important');
+                }
+            }
+        }
+
+        function myFunction_1() {
+            var input, filter, ul, li, a, i, txtValue;
+            input = document.getElementById("city");
+            filter = input.value.toUpperCase();
+            console.log(filter);
+            ul = document.getElementById("jk-list");
+            li = ul.getElementsByTagName("li");
+            if (filter != "ВСЕ") {
+                for (i = 0; i < li.length; i++) {
+                    a = li[i].getElementsByClassName("my-class")[0];
+
+                    txtValue = a.textContent || a.innerText;
+                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                        li[i].style.setProperty('display', 'block', 'important');
+                    } else {
+                        li[i].style.setProperty('display', 'none', 'important');
+                    }
+                }
+            } else {
+                for (i = 0; i < li.length; i++) {
+                    li[i].style.setProperty('display', 'block', 'important');
+                }
+            }
+        }
+
+        $(document).ready(function () {
+            var max_fields = 10;
+            var wrapper = $("#addresses");
+            var add_button = $("#add_address");
+
+            var x = 2;
+            $(add_button).click(function (e) {
+                e.preventDefault();
+                if (x < max_fields) {
+                    x++;
+                    $(wrapper).append('<li class="list-group-item d-flex justify-content-between align-items-center"><input name="fullName' + x + '" type="text" class="form-control col-lg-10 address" id="fullName' + x + '" required><a href="#" class="btn btn-danger delete col-lg-2"><span class="badge bg-danged rounded-pill">x</span></a></li>'); //add input box
+
+                } else {
+                    alert('You Reached the limits')
+                }
+            });
+
+            $(wrapper).on("click", ".delete", function (e) {
+                e.preventDefault();
+                $(this).parent('li').remove();
+                x--;
+            })
+        });
+    </script>
+
+{% endblock %}

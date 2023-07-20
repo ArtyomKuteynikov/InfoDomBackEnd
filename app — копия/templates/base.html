@@ -1,0 +1,507 @@
+<!-- templates/base.html -->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ИнфоДом</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+
+    <script type="text/javascript" src="//code.jquery.com/jquery-1.4.2.min.js"></script>
+    <script type="text/javascript" src="//cdn.socket.io/4.4.1/socket.io.min.js"></script>
+    <link rel="icon" href="{{ url_for("static", filename="favicon.ico") }}">
+    <!-- Google Fonts -->
+    <link href="https://fonts.gstatic.com" rel="preconnect">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i"
+          rel="stylesheet">
+
+    <!-- Vendor CSS Files -->
+    <link href="{{ url_for("static", filename="vendor/bootstrap/css/bootstrap.min.css") }}" rel="stylesheet">
+    <link href="{{ url_for("static", filename="vendor/bootstrap-icons/bootstrap-icons.css") }}" rel="stylesheet">
+    <link href="{{ url_for("static", filename="vendor/boxicons/css/boxicons.min.css") }}" rel="stylesheet">
+    <link href="{{ url_for("static", filename="vendor/quill/quill.snow.css") }}" rel="stylesheet">
+    <link href="{{ url_for("static", filename="vendor/quill/quill.bubble.css") }}" rel="stylesheet">
+    <link href="{{ url_for("static", filename="vendor/remixicon/remixicon.css") }}" rel="stylesheet">
+    <link href="{{ url_for("static", filename="vendor/simple-datatables/style.css") }}" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js">
+    </script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/js/bootstrap.min.js">
+    </script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css">
+    <script type="text/javascript">
+        function showHideRow(row) {
+            $("#" + row).toggle();
+        }
+    </script>
+
+    <!-- Template Main CSS File -->
+    <link href="{{ url_for("static", filename="css/style.css") }}" rel="stylesheet">
+    {% block head %}
+        <style>
+            .navbar {
+                box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.15);
+            }
+        </style>
+    {% endblock %}
+    <style>
+        form.row {
+            max-width: fit-content;
+        }
+
+        .mysidebar {
+            min-width: fit-content;
+            position: absolute;
+            min-height: calc(100vh - 52px);
+            background-color: #42506B;
+        }
+
+        body {
+            font-size: 12px !important;
+            background-color: #fff;
+        }
+
+        a {
+            color: #ffffff
+        }
+
+        .btn {
+            color: #000 !important;
+        }
+
+        a {
+            color: #4154f1 !important;
+            text-decoration: none;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            color: #012970 !important;
+            font-family: "Nunito", sans-serif;
+        }
+
+        .row {
+            text-align: center !important;
+        }
+
+        .notifications {
+            max-height: 90vh;
+            overflow: auto;
+        }
+
+        .header {
+            transition: all 0.5s;
+            z-index: 997;
+            height: 60px;
+            box-shadow: 0px 2px 20px transparent !important;
+            background-color: transparent !important;
+            padding-left: 20px;
+        }
+
+        .sidebar {
+            top: 0 !important;
+            padding: 60px 20px !important;
+        }
+
+        table {
+            margin-top: 0 !important;
+            font-size: 12px;
+        }
+        .hidden_row {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+<section>
+
+    <header id="header" class="header fixed-top d-flex align-items-center">
+
+        <div class="d-flex align-items-center justify-content-between">
+            <i class="bi bi-list toggle-sidebar-btn"></i>
+        </div><!-- End Logo -->
+
+
+        <nav class="header-nav ms-auto">
+            <ul class="d-flex align-items-center">
+
+                <li class="nav-item dropdown">
+
+                    <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
+                        <i class="bi bi-bell"></i>
+                        <span class="badge bg-primary badge-number">4</span>
+                    </a><!-- End Notification Icon -->
+
+                    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow notifications">
+                        <li class="dropdown-header">
+                            У вас 4 непрочитанных уведомления
+                            <a href="#"><span class="badge rounded-pill bg-primary p-2 ms-2"></span></a>
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+
+                        <a href="/orgs">
+                            <li class="notification-item">
+                                <i class="bi bi bi-info-circle text-primary"></i>
+                                <div>
+                                    <h4>Зарегистрирована новая организация</h4>
+                                    <p>Организация ООО Рога и копыта зарегистрирована 16.03.2023 в 10:00</p>
+                                    <p>16.03.2023 10:00</p>
+                                </div>
+                            </li>
+                        </a>
+
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+
+                        <a href="/people">
+                            <li class="notification-item">
+                                <i class="bi bi bi-info-circle text-primary"></i>
+                                <div>
+                                    <h4>Зарегистрирован новый жилец</h4>
+                                    <p>Жилец Иван Иванов зарегистрировался 16.03.2023 в 10:00</p>
+                                    <p>16.03.2023 10:00</p>
+                                </div>
+                            </li>
+                        </a>
+
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <a href="/moderate-jk">
+                            <li class="notification-item">
+                                <i class="bi bi-check-circle text-success"></i>
+                                <div>
+                                    <h4>Запрос на привязку дома к ЖК</h4>
+                                    <p>Пользователь Иван Иванов сделал запрос на привязку дома по адресу г. Москва, ул
+                                        Пушкина, д5 к ЖК Алые Паруса</p>
+                                    <p>16.03.2023 9:00</p>
+                                </div>
+                            </li>
+                        </a>
+
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <a href="/issues">
+                            <li class="notification-item">
+                                <i class="bi bi-info-circle text-warning"></i>
+                                <div>
+                                    <h4>Новое обращение в техподдержку</h4>
+                                    <p>Пользователь Иван Иванов обратился в техподдержку</p>
+                                    <p>16.03.2023 8:00</p>
+                                </div>
+                            </li>
+                        </a>
+                        <a href="/orgs">
+                            <li class="notification-item">
+                                <i class="bi bi bi-info-circle text-primary"></i>
+                                <div>
+                                    <h4>Зарегистрирована новая организация</h4>
+                                    <p>Организация ООО Рога и копыта зарегистрирована 16.03.2023 в 10:00</p>
+                                    <p>16.03.2023 10:00</p>
+                                </div>
+                            </li>
+                        </a>
+
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+
+                        <a href="/people">
+                            <li class="notification-item">
+                                <i class="bi bi bi-info-circle text-primary"></i>
+                                <div>
+                                    <h4>Зарегистрирован новый жилец</h4>
+                                    <p>Жилец Иван Иванов зарегистрировался 16.03.2023 в 10:00</p>
+                                    <p>16.03.2023 10:00</p>
+                                </div>
+                            </li>
+                        </a>
+
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <a href="/moderate-jk">
+                            <li class="notification-item">
+                                <i class="bi bi-check-circle text-success"></i>
+                                <div>
+                                    <h4>Запрос на привязку дома к ЖК</h4>
+                                    <p>Пользователь Иван Иванов сделал запрос на привязку дома по адресу г. Москва, ул
+                                        Пушкина, д5 к ЖК Алые Паруса</p>
+                                    <p>16.03.2023 9:00</p>
+                                </div>
+                            </li>
+                        </a>
+
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <a href="/issues">
+                            <li class="notification-item">
+                                <i class="bi bi-info-circle text-warning"></i>
+                                <div>
+                                    <h4>Новое обращение в техподдержку</h4>
+                                    <p>Пользователь Иван Иванов обратился в техподдержку</p>
+                                    <p>16.03.2023 8:00</p>
+                                </div>
+                            </li>
+                        </a>
+                        <a href="/orgs">
+                            <li class="notification-item">
+                                <i class="bi bi bi-info-circle text-primary"></i>
+                                <div>
+                                    <h4>Зарегистрирована новая организация</h4>
+                                    <p>Организация ООО Рога и копыта зарегистрирована 16.03.2023 в 10:00</p>
+                                    <p>16.03.2023 10:00</p>
+                                </div>
+                            </li>
+                        </a>
+
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+
+                        <a href="/people">
+                            <li class="notification-item">
+                                <i class="bi bi bi-info-circle text-primary"></i>
+                                <div>
+                                    <h4>Зарегистрирован новый жилец</h4>
+                                    <p>Жилец Иван Иванов зарегистрировался 16.03.2023 в 10:00</p>
+                                    <p>16.03.2023 10:00</p>
+                                </div>
+                            </li>
+                        </a>
+
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <a href="/moderate-jk">
+                            <li class="notification-item">
+                                <i class="bi bi-check-circle text-success"></i>
+                                <div>
+                                    <h4>Запрос на привязку дома к ЖК</h4>
+                                    <p>Пользователь Иван Иванов сделал запрос на привязку дома по адресу г. Москва, ул
+                                        Пушкина, д5 к ЖК Алые Паруса</p>
+                                    <p>16.03.2023 9:00</p>
+                                </div>
+                            </li>
+                        </a>
+
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <a href="/issues">
+                            <li class="notification-item">
+                                <i class="bi bi-info-circle text-warning"></i>
+                                <div>
+                                    <h4>Новое обращение в техподдержку</h4>
+                                    <p>Пользователь Иван Иванов обратился в техподдержку</p>
+                                    <p>16.03.2023 8:00</p>
+                                </div>
+                            </li>
+                        </a>
+
+                    </ul><!-- End Notification Dropdown Items -->
+
+                </li><!-- End Notification Nav -->
+
+                <li class="nav-item dropdown pe-3">
+
+                    <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
+                        <i class="bi bi-person-fill rounded-circle" style="font-size: 25px;"></i>
+                        <!--span class="d-none d-md-block dropdown-toggle ps-2">{{ current_user.name }} {{ current_user.surname }}</span-->
+                    </a><!-- End Profile Iamge Icon -->
+
+                    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
+                        <li class="dropdown-header">
+                            <h6>{{ current_user.name }} {{ current_user.surname }}</h6>
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+
+                        <li>
+                            <a class="dropdown-item d-flex align-items-center" href="{{ url_for("main.profile") }}">
+                                <i class="bi bi-person"></i>
+                                <span>Профиль</span>
+                            </a>
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+
+                        <li>
+                            <a class="dropdown-item d-flex align-items-center" href="{{ url_for("auth.logout") }}">
+                                <i class="bi bi-box-arrow-right"></i>
+                                <span>Выйти</span>
+                            </a>
+                        </li>
+
+                    </ul><!-- End Profile Dropdown Items -->
+                </li><!-- End Profile Nav -->
+
+            </ul>
+        </nav><!-- End Icons Navigation -->
+
+    </header><!-- End Header -->
+
+    {% if current_user.is_authenticated %}
+        <aside id="sidebar" class="sidebar">
+
+            <ul class="sidebar-nav" id="sidebar-nav">
+                <a href="{{ url_for('main.profile') }}" style="max-height: 50px">
+                    <div style="display: flex;align-items: center"><img
+                            src="{{ url_for('static', filename="main-icon.png") }}"
+                            style="height:50px;margin: 0 5px 0 0;">
+                        <div style="text-align: center;">
+                            <h1 class="title" style="font-size: 35px">ИнфоДом</h1>
+                            <p class="subtitle" style="font-size: 10px;margin-bottom: 0px;">Информационный портал ЖК</p>
+                        </div>
+                    </div>
+                </a>
+                <li>
+                    <hr class="divider">
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link collapsed" href="{{ url_for("main.stats") }}">
+                        <i class="bi bi-bar-chart"></i>
+                        <span>Статистика</span>
+                    </a>
+                </li><!-- End Dashboard Nav -->
+
+                <li class="nav-item">
+                    <a class="nav-link collapsed" href="{{ url_for("main.sales_org") }}">
+                        <i class="bi bi-cash-coin"></i>
+                        <span>Продажи</span>
+                    </a>
+                </li><!-- End Dashboard Nav -->
+
+                <li class="nav-item">
+                    <a class="nav-link collapsed" data-bs-target="#components-nav1" data-bs-toggle="collapse" href="#">
+                        <i class="bi bi-building"></i><span>Жилищные комплексы</span><i
+                            class="bi bi-chevron-down ms-auto"></i>
+                    </a>
+                    <ul id="components-nav1" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+                        <li>
+                            <a href="{{ url_for('main.jk_all') }}">
+                                <i class="bi bi-circle"></i><span>Все ЖК</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('main.jk_moderate') }}">
+                                <i class="bi bi-circle"></i><span>Модерация ЖК</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li><!-- End Components Nav -->
+
+                <!--li class="nav-item">
+                    <a class="nav-link collapsed" data-bs-target="#components-nav2" data-bs-toggle="collapse" href="#">
+                        <i class="bi bi-file-earmark-person"></i><span>Жильцы/Организации</span><i
+                            class="bi bi-chevron-down ms-auto"></i>
+                    </a>
+                    <ul id="components-nav2" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+                        <li>
+                            <a href="/people">
+                                <i class="bi bi-circle"></i><span>Жильцы</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/orgs">
+                                <i class="bi bi-circle"></i><span>Организации</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li-->
+
+                <li class="nav-item">
+                    <a class="nav-link collapsed" data-bs-target="#components-nav3" data-bs-toggle="collapse" href="#">
+                        <i class="bi bi-house-door"></i><span>Управляющие компании</span><i
+                            class="bi bi-chevron-down ms-auto"></i>
+                    </a>
+                    <ul id="components-nav3" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+                        <li>
+                            <a href="/uk/all">
+                                <i class="bi bi-circle"></i><span>Главная</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/uk/moderate">
+                                <i class="bi bi-circle"></i><span>Медерация УК</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link collapsed" href="/news">
+                        <i class="bi bi-cash-coin"></i>
+                        <span>Объявления/Новости</span>
+                    </a>
+                </li><!-- End Dashboard Nav -->
+
+                <li class="nav-item">
+                    <a class="nav-link collapsed" data-bs-target="#components-nav5" data-bs-toggle="collapse" href="#">
+                        <i class="bi bi-chat-left-dots"></i><span>Чаты</span><i class="bi bi-chevron-down ms-auto"></i>
+                    </a>
+                    <ul id="components-nav5" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+                        <li>
+                            <a href="/chats/jk">
+                                <i class="bi bi-circle"></i><span>Чаты ЖК</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/chats/personal">
+                                <i class="bi bi-circle"></i><span>Личные чаты</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li><!-- End Components Nav -->
+
+                <li class="nav-item">
+                    <a class="nav-link collapsed" href="/support">
+                        <i class="bi bi-exclamation-square"></i>
+                        <span>Поддержка</span>
+                    </a>
+                </li><!-- End Dashboard Nav -->
+
+            </ul>
+
+        </aside><!-- End Sidebar-->
+    {% endif %}
+
+    <main id="main" class="main">
+
+        {% block content %}
+        {% endblock %}
+
+    </main><!-- End #main -->
+</section>
+
+<a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
+        class="bi bi-arrow-up-short"></i></a>
+
+<!-- Vendor JS Files -->
+<script src="{{ url_for("static", filename="vendor/apexcharts/apexcharts.min.js") }}"></script>
+<script src="{{ url_for("static", filename="vendor/bootstrap/js/bootstrap.bundle.min.js") }}"></script>
+<script src="{{ url_for("static", filename="vendor/chart.js/chart.min.js") }}"></script>
+<script src="{{ url_for("static", filename="vendor/echarts/echarts.min.js") }}"></script>
+<script src="{{ url_for("static", filename="vendor/quill/quill.min.js") }}"></script>
+<script src="{{ url_for("static", filename="vendor/simple-datatables/simple-datatables.js") }}"></script>
+<script src="{{ url_for("static", filename="vendor/tinymce/tinymce.min.js") }}"></script>
+<script src="{{ url_for("static", filename="vendor/php-email-form/validate.js") }}"></script>
+
+<!-- Template Main JS File -->
+<script src="{{ url_for("static", filename="js/main.js") }}"></script>
+
+</body>
+
+</html>

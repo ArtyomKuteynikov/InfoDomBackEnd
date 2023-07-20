@@ -1,0 +1,246 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="pagetitle">
+        <section class="section profile">
+            <div class="row">
+
+                <div class="col-xl-12">
+
+                    <div class="card">
+                        <div class="card-title">
+                            <div class="">
+                                <div style="display: flex;/* padding:5px; */" class="col-xl-12">
+                                    <a type="button" href="{{ url_for('main.stats') }}"><i
+                                            style="font-size: 30px" class="bi bi-arrow-left-square"></i></a>
+                                </div>
+
+                            </div>
+                            <div class="row">
+
+                            </div>
+                            Карточка {% if user.org == 1 %} организации {% else %} жильца {% endif %}
+                            {% if user.status == 'blocked' %}
+                                <p style="color: red;font-family: 'Nunito', sans-serif;font-size: 18px;">Пользователь
+                                    заблокирован</p>
+                            {% endif %}
+                        </div>
+                        <div class="col-xl-12"
+                             style="justify-content: center;padding: 0;text-align: center;display: flex;">
+                            {% if user.photo %}
+                                <img src="{{ url_for('static', filename='profile_photos/'+user.photo) }}"
+                                     alt="Profile"
+                                     class="rounded-circle profile-picture" style="height: 120px;"/>
+                                <a href="/delete_picture/{{ user.id }}"
+                                   class="rounded-circle btn btn-info btn-sm profile-delete"><i
+                                        class="bi bi-trash"></i></a>
+                            {% else %}
+                                <h6 class="rounded-circle" style="height: 120px;max-width: 120px;">Нет фото</h6>
+                            {% endif %}
+                        </div>
+                        <div class="card-body profile-card pt-4 d-flex flex-column align-items-center">
+                            <form method="post" action="{{ url_for('main.user_post', id=user.id) }}" class="col-xl-12">
+
+                                <div class="row" style="min-width: 100%">
+                                    <div class="col-xl-12">
+                                        <div class="row">
+                                            <div class="col-xl-4">
+                                                <b>DeviceID</b>
+                                                <p>{{ user.deviceId }}</p>
+                                            </div>
+                                            <div class="col-xl-4">
+                                                <b>Баллы</b>
+                                                <p style="color:green; font-size: 14px">{{ user.points }} баллов</p>
+                                            </div>
+                                            <div class="col-xl-4">
+                                                <b>OS</b>
+                                                <p>{{ user.os }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="input-group mb-3">
+                                    <input type="text" class="form-control" value="{{ user.phone }}"
+                                           placeholder="Телефон"
+                                           aria-describedby="button-addon5" id="addon5" name="phone" data-phone-pattern>
+                                    <div class="input-group-append">
+                                        <button class="btn btn-outline-secondary" type="button" id="button-addon5">X
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="input-group mb-3">
+                                    <input type="text" class="form-control" value="{{ user.name }}" placeholder="Имя"
+                                           aria-describedby="button-addon3" id="addon3" name="name">
+                                    <div class="input-group-append">
+                                        <button class="btn btn-outline-secondary" type="button" id="button-addon3">X
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="input-group mb-3">
+                                    <input type="text" class="form-control" value="{{ user.surname }}"
+                                           placeholder="Фамилия"
+                                           aria-describedby="button-addon4" id="addon4" name="surname">
+                                    <div class="input-group-append">
+                                        <button class="btn btn-outline-secondary" type="button" id="button-addon4">X
+                                        </button>
+                                    </div>
+                                </div>
+                                {% if user.org == 1 %}
+                                    <div class="input-group mb-3">
+                                        <input type="text" class="form-control" name="second_name" id="addon0"
+                                               placeholder="Отчество"
+                                               value="{{ user.second_name }}" aria-describedby="button-addon0">
+                                        <div class="input-group-append">
+                                            <button class="btn btn-outline-secondary" type="button" id="button-addon0">X
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="input-group mb-3">
+                                        <input type="text" class="form-control" name="org_name" id="addon1"
+                                               placeholder="Название организации"
+                                               value="{{ user.org_name }}" aria-describedby="button-addon1">
+                                        <div class="input-group-append">
+                                            <button class="btn btn-outline-secondary" type="button" id="button-addon1">X
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="input-group mb-3">
+                                        <input type="text" class="form-control" value="{{ user.inn }}" placeholder="ИНН"
+                                               aria-describedby="button-addon2" name="inn" id="addon2">
+                                        <div class="input-group-append">
+                                            <button class="btn btn-outline-secondary" type="button" id="button-addon2">X
+                                            </button>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                                <div class="input-group mb-3">
+                                    <select class="form-select" name="jk">
+                                        {% for i in jks %}
+                                            <option value="{{ i.id }}"
+                                                    {% if i.id==user.jk %}selected{% endif %}>{{ i.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="input-group mb-3">
+                                    <input type="text" class="form-control" id="addon6" placeholder="Адрес"
+                                           value="{{ user.address }}" name="address"
+                                           aria-describedby="button-addon6">
+
+                                    <div class="input-group-append">
+                                        <button class="btn btn-outline-secondary" type="button" id="button-addon6">X
+                                        </button>
+                                    </div>
+                                </div>
+                                {% if user.org %}
+                                    <table class="table">
+                                        <thead>
+                                        <tr>
+                                            <td>Дата транзакции</td>
+                                            <td>Сумма, РУБ</td>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for i in user_transactions %}
+                                            <tr>
+                                                <td>{{ i.timestamp.strftime('%d.%m.%y') }}</td>
+                                                <td>{{ i.amount }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                {% endif %}
+                                <div class="row">
+                                    <div style="display: flex;/* padding:5px; */" class="col-xl-6">
+                                        <div class="left">
+                                            <a href="/connect/{{ user.id }}" class="btn btn-primary">Связаться</a>
+                                            {% if user.status == 'blocked' %}
+                                                <a href="/unblock/{{ user.id }}"
+                                                   class="btn btn-secondary">Разблокировать</a>
+                                            {% else %}
+                                                <a href="/block/{{ user.id }}"
+                                                   class="btn btn-secondary">Заблокировать</a>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div style="display: flex;/* padding:5px; */" class="col-xl-6">
+                                        <div class="right">
+                                            <button type="submit"
+                                                    class="btn btn-primary">Сохранить
+                                            </button>
+                                            <a href="/user/{{ user.id }}"
+                                               class="btn btn-secondary">Отменить</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+
+
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xl-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">{% if user.org %} Новости пользователя {% else %} Объявления
+                                    пользователя {% endif %}</h5>
+                                <!-- Default List group -->
+                                <ul class="list-group">
+                                    {% for i in news %}
+                                        <a href="/new/{{ i.id }}">
+                                            <li class="list-group-item">{{ i.name }}</li>
+                                        </a>
+                                    {% endfor %}
+                                </ul><!-- End Default List group -->
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        </section>
+
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                var eventCalllback = function (e) {
+                    var el = e.target,
+                        clearVal = el.dataset.phoneClear,
+                        pattern = el.dataset.phonePattern,
+                        matrix_def = "+7(___) ___-__-__",
+                        matrix = pattern ? pattern : matrix_def,
+                        i = 0,
+                        def = matrix.replace(/\D/g, ""),
+                        val = e.target.value.replace(/\D/g, "");
+                    if (clearVal !== 'false' && e.type === 'blur') {
+                        if (val.length < matrix.match(/([\_\d])/g).length) {
+                            e.target.value = '';
+                            return;
+                        }
+                    }
+                    if (def.length >= val.length) val = def;
+                    e.target.value = matrix.replace(/./g, function (a) {
+                        return /[_\d]/.test(a) && i < val.length ? val.charAt(i++) : i >= val.length ? "" : a
+                    });
+                }
+                var phone_inputs = document.querySelectorAll('[data-phone-pattern]');
+                for (let elem of phone_inputs) {
+                    for (let ev of ['input', 'blur', 'focus', 'load']) {
+                        elem.addEventListener(ev, eventCalllback);
+                    }
+                }
+            });
+            {% if user.org == 1 %}
+                {% for i in [0, 1, 2, 3, 4, 5, 6, 7, 8] %}
+                    document.getElementById("button-addon{{ i }}").onclick = function (e) {
+                        document.getElementById("addon{{ i }}").value = "";
+                    };
+                {% endfor %}
+            {% else %}
+                {% for i in [3, 4, 5, 6, 7, 8] %}
+                    document.getElementById("button-addon{{ i }}").onclick = function (e) {
+                        document.getElementById("addon{{ i }}").value = "";
+                    };
+                {% endfor %}
+            {% endif %}
+        </script>
+    </div>
+{% endblock %}

@@ -1,0 +1,253 @@
+<!-- templates/stats.html -->
+
+{% extends "base.html" %}
+
+{% block content %}
+    <style>
+        h6 {
+            font-size: 28px !important;
+            color: #012970 !important;
+            font-weight: 700 !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+
+        label {
+            font-size: 15px;
+            font-weight: 600;
+            color: #4154f1;
+            padding: 10px 15px;
+            border-radius: 4px;
+        }
+
+        li .form-control {
+            width: 90%;
+        }
+    </style>
+    <style>
+        form {
+            max-width: fit-content;
+        }
+
+        .card-title {
+            font-size: 16px;
+        }
+
+        .form-control {
+            font-size: 12px;
+        }
+
+        .form-select {
+            font-size: 12px;
+        }
+
+        .btn {
+            font-size: 12px;
+        }
+
+
+        .tab.active {
+            background-color: #5071BF4D !important;
+        }
+
+
+        .tab:hover {
+            background-color: #5071BF4D !important;
+        }
+
+        tr.active {
+            background-color: #5071BF4D !important;
+        }
+
+        p {
+            font-size: 12px;
+        }
+
+
+        tr:hover {
+            background-color: #5071BF4D !important;
+        }
+
+        table {
+            margin-top: 40px;
+        }
+
+        th div {
+            margin-top: -40px;
+            position: absolute;
+        }
+
+        /* design */
+        table {
+            border-collapse: collapse;
+        }
+
+        tr:nth-child(even) {
+            background: #EEE;
+        }
+
+        p.mytabs {
+            font-size: 16px;
+            margin: 1;
+        }
+
+    </style>
+    <div class="pagetitle">
+        <section class="section profile">
+            <div class="row">
+
+                <div class="col-xl-12">
+
+                    <div class="card">
+                        <div class="card-title">
+                            {{ jk.name }}
+                        </div>
+                        <div class="card-body profile-card pt-4 d-flex flex-column align-items-center">
+                            <div class="row">
+
+                                {% if jk.photo1 %}
+                                    <div class="col-xl-4" style="padding: 0;">
+                                        <img src="{{ url_for('static', filename='profile_photos/'+jk.photo1) }}"
+                                             alt="Profile"
+                                             class="" style="height: 60px;"/>
+                                    </div>
+                                {% else %}
+                                    <div class="" style="padding: 0;">
+                                        <h6 class="rounded-circle" style="height: 60px;max-width: 70px;">Нет фото</h6>
+                                    </div>
+                                {% endif %}
+                                <div class="col-xl-4" style="padding: 0;">
+                                    {% if jk.photo2 %}
+                                        <img src="{{ url_for('static', filename='news/'+jk.photo2) }}"
+                                             alt="Profile"
+                                             class="" style="height: 60px;"/>
+                                    {% else %}
+                                    {% endif %}
+                                </div>
+                                <div class="col-xl-4" style="padding: 0;">
+                                    {% if jk.photo3 %}
+                                        <img src="{{ url_for('static', filename='news/'+jk.photo1) }}"
+                                             alt="Profile"
+                                             class="" style="height: 60px;"/>
+                                    {% else %}
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <br>
+
+                            <div class="col-xl-12">
+                                {% if jk.blocked == 0 %}
+                                    <p style="color:green">Показывается</p>
+                                {% else %}
+                                    <p style="color:red">Заблокировано</p>
+                                {% endif %}
+                                <div class="row">
+
+                                    <div class="col-xl-12">
+                                        <b>Автор</b>
+                                        <p>
+                                            <a href="/user/{{ User.query.filter_by().first().id }}">{{ User.query.filter_by().first().name }} {{ User.query.filter_by().first().surname }}</a>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="input-group mb-3">
+                                <input type="text" class="form-control"
+                                       value="{{ jk.name }}" aria-describedby="button-addon1">
+                                <div class="input-group-append">
+                                    <button class="btn btn-outline-secondary" type="button" id="button-addon1">X
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="input-group mb-3">
+                                <input type="text" class="form-control" value="{{ jk.description }}"
+                                       aria-describedby="button-addon2">
+                                <div class="input-group-append">
+                                    <button class="btn btn-outline-secondary" type="button" id="button-addon2">X
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="input-group mb-3">
+                                <input type="text" class="form-control" value="{{ jk.address }}"
+                                       aria-describedby="button-addon3">
+                                <div class="input-group-append">
+                                    <button class="btn btn-outline-secondary" type="button" id="button-addon3">X
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="input-group mb-3">
+                                <input type="text" class="form-control" value="{{ jk.phone }}"
+                                       aria-describedby="button-addon4">
+                                <div class="input-group-append">
+                                    <button class="btn btn-outline-secondary" type="button" id="button-addon4">X
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="input-group mb-3">
+                                <input type="text" class="form-control"
+                                       value="{{ jk.name }}" aria-describedby="button-addon5">
+                                <div class="input-group-append">
+                                    <button class="btn btn-outline-secondary" type="button" id="button-addon5">X
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="input-group mb-3">
+                                <input type="text" class="form-control"
+                                       value="{{ JK.query.filter_by(id=jk.jk).first().name }}"
+                                       aria-describedby="button-addon6">
+                                <div class="input-group-append">
+                                    <button class="btn btn-outline-secondary" type="button" id="button-addon6">X
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div style="padding:5px" class="col-xl-6">
+                                    <a href="user/" type="submit"
+                                       class="btn btn-primary">Редактировать</a>
+                                </div>
+                                <div style="padding:5px" class="col-xl-6">
+                                    <button type="submit" class="btn btn-danger">Заблокировать</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </section>
+
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                var eventCalllback = function (e) {
+                    var el = e.target,
+                        clearVal = el.dataset.phoneClear,
+                        pattern = el.dataset.phonePattern,
+                        matrix_def = "+7(___) ___-__-__",
+                        matrix = pattern ? pattern : matrix_def,
+                        i = 0,
+                        def = matrix.replace(/\D/g, ""),
+                        val = e.target.value.replace(/\D/g, "");
+                    if (clearVal !== 'false' && e.type === 'blur') {
+                        if (val.length < matrix.match(/([\_\d])/g).length) {
+                            e.target.value = '';
+                            return;
+                        }
+                    }
+                    if (def.length >= val.length) val = def;
+                    e.target.value = matrix.replace(/./g, function (a) {
+                        return /[_\d]/.test(a) && i < val.length ? val.charAt(i++) : i >= val.length ? "" : a
+                    });
+                }
+                var phone_inputs = document.querySelectorAll('[data-phone-pattern]');
+                for (let elem of phone_inputs) {
+                    for (let ev of ['input', 'blur', 'focus', 'load']) {
+                        elem.addEventListener(ev, eventCalllback);
+                    }
+                }
+            });
+        </script>
+    </div>
+
+{% endblock %}

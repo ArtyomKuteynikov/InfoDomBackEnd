@@ -1,0 +1,292 @@
+<!-- templates/stats.html -->
+
+{% extends "base.html" %}
+
+{% block content %}
+    <style>
+        .list-group {
+            max-height: 50vh;
+            overflow: auto;
+        }
+
+        .card-title {
+            font-size: 16px;
+        }
+
+        .form-control {
+            font-size: 12px;
+        }
+
+        .form-select {
+            font-size: 12px;
+        }
+
+        .btn {
+            font-size: 12px;
+        }
+
+
+        .tab.active {
+            color: #000;
+            background-color: #5071BF4D !important;
+        }
+
+
+        .tab:hover {
+            background-color: #5071BF4D !important;
+        }
+
+        tr.active {
+            background-color: #5071BF4D !important;
+        }
+
+        p {
+            font-size: 12px;
+        }
+
+
+        tr:hover {
+            background-color: #5071BF4D !important;
+        }
+
+        table {
+            margin-top: 40px;
+        }
+
+        th div {
+            margin-top: -40px;
+            position: absolute;
+        }
+
+        /* design */
+        table {
+            border-collapse: collapse;
+        }
+
+        tr:nth-child(even) {
+            background: #EEE;
+        }
+
+        p.mytabs {
+            font-size: 16px;
+            margin: 1;
+        }
+
+        .card-title {
+            font-size: 16px;
+        }
+
+        .form-control {
+            font-size: 12px;
+        }
+
+        .btn {
+            font-size: 12px;
+        }
+
+        .tab.active {
+            background-color: #5071BF4D !important;
+        }
+
+
+        .tab:hover {
+            background-color: #5071BF4D !important;
+        }
+
+        tr.active {
+            background-color: #5071BF4D !important;
+        }
+
+        p {
+            font-size: 12px;
+        }
+
+
+        tr:hover {
+            background-color: #5071BF4D !important;
+        }
+
+        td {
+            text-align: center !important;
+        }
+
+        table {
+            margin-top: 40px;
+        }
+
+        th div {
+            margin-top: -40px;
+            position: absolute;
+        }
+
+        /* design */
+        table {
+            border-collapse: collapse;
+        }
+
+        tr:nth-child(even) {
+            background: #EEE;
+        }
+
+
+    </style>
+    <div class="row">
+        <div class="col-lg-3">
+            <div class="card tab active"
+                 onclick="window.location.href='/jk/all'; return false">
+                <div class="">
+                    <p class="mytabs"></p>
+                    <p class="mytabs">Главная</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3">
+            <div class="card tab"
+                 onclick="window.location.href='/jk/moderate'; return false">
+                <div class="">
+                    <p class="mytabs"></p>
+                    <p class="mytabs">Модерация ЖК</p>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Жилищные комплексы</h5>
+
+                <!-- List group with custom content -->
+                <div class="row">
+                    <div class="col-lg-6">
+                        <input onkeyup="myFunction()" id="jk" type="text" class="form-control"
+                               placeholder="Введите название ЖК" list="jk_name">
+                        <datalist id="jk_name">
+                            {% for jk_ in jks %}
+                                <option value="{{ jk_.name }}"></option>
+                            {% endfor %}
+                        </datalist>
+                    </div>
+                    <div class="col-lg-6">
+                        <select class="form-select" id="city" onchange="myFunction_1()">
+                            <option value="ВСЕ" selected>ВСЕ</option>
+                            {% for city in cities %}
+                                <option value="{{ city[0] }}">{{ city[0] }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <br>
+                <div class="card">
+                    <div class="card-body pt-3">
+                        <div style="overflow-x:auto;">
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th scope="col">ID</th>
+                                    <th scope="col">Название</th>
+                                    <th scope="col">Город</th>
+                                    <th scope="col">Кол-во жильцов</th>
+                                    <th scope="col">Кол-во организаций</th>
+                                    <th scope="col">Кол-во объявлений</th>
+                                    <th scope="col">Кол-во новостей</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for jk in jks %}
+                                    <tr onclick="window.location.href='/jk/{{ jk.id }}'; return false">
+                                        <td>{{ jk.id }}</td>
+                                        <td class="jk-name">{{ jk.name }}</td>
+                                        <td class="jk-city">{{ jk.city }}</td>
+                                        <td>{{ jk.num_people }}</td>
+                                        <td>{{ jk.num_orgs }}</td>
+                                        <td>{{ jk.num_proms }}</td>
+                                        <td>{{ jk.num_news }}</td>
+                                    </tr>
+                                {% endfor %}
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <ol class="list-group list-group-numbered" id="jk-list">
+                    <li>
+                        <a href="{{ url_for('main.jk_add') }}" class="btn btn-primary">Добавить</a>
+                    </li>
+                </ol>
+
+            </div>
+        </div>
+    </div>
+    <script>
+        function myFunction() {
+            var input, filter, tbody, tr, name, i, txtValue;
+            input = document.getElementById("jk");
+            filter = input.value.toUpperCase();
+            tbody = document.getElementById("jk-list");
+            tr = tbody.getElementsByTagName("tr");
+            for (i = 0; i < tr.length; i++) {
+                name = tr[i].getElementsByClassName("jk-name")[0];
+
+                txtValue = name.textContent || name.innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    tr[i].style.setProperty('display', 'block', 'important');
+                } else {
+                    tr[i].style.setProperty('display', 'none', 'important');
+                }
+            }
+        }
+
+        function myFunction_1() {
+            var input, filter, tbody, tr, city, i, txtValue;
+            input = document.getElementById("city");
+            filter = input.value.toUpperCase();
+            console.log(filter);
+            tbody = document.getElementById("jk-list");
+            tr = tbody.getElementsByTagName("tr");
+            if (filter != "ВСЕ") {
+                for (i = 0; i < tr.length; i++) {
+                    city = tr[i].getElementsByClassName("jk-city")[0];
+
+                    txtValue = city.textContent || city.innerText;
+                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                        li[i].style.setProperty('display', 'block', 'important');
+                    } else {
+                        li[i].style.setProperty('display', 'none', 'important');
+                    }
+                }
+            } else {
+                for (i = 0; i < tr.length; i++) {
+                    tr[i].style.setProperty('display', 'block', 'important');
+                }
+            }
+        }
+
+        // $(document).ready(function () {
+        //     var max_fields = 10;
+        //     var wrapper = $("#addresses");
+        //     var add_button = $("#add_address");
+
+        //     var x = 2;
+        //     $(add_button).click(function (e) {
+        //         e.preventDefault();
+        //         if (x < max_fields) {
+        //             x++;
+        //             $(wrapper).append('<li class="list-group-item d-flex justify-content-between align-items-center"><input name="fullName' + x + '" type="text" class="form-control col-lg-10 address" id="fullName' + x + '" required><a href="#" class="btn btn-danger delete col-lg-2"><span class="badge bg-danged rounded-pill">x</span></a></li>'); //add input box
+
+        //         } else {
+        //             alert('You Reached the limits')
+        //         }
+        //     });
+
+        //     $(wrapper).on("click", ".delete", function (e) {
+        //         e.preventDefault();
+        //         $(this).parent('li').remove();
+        //         x--;
+        //     })
+        // });
+    </script>
+
+{% endblock %}

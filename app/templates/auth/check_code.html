@@ -1,0 +1,136 @@
+<!-- templates/login.html -->
+
+{% extends "base.html" %}
+
+{% block head %}
+    <style>
+        .shape1 {
+            transform: scaleY(2);
+            background-image: url("{{ url_for('static', filename="Rectangle 1041.png")}}");
+            position: fixed;
+            width: 392px;
+            height: 1288px;
+            left: 0px;
+            top: 0px;
+            background-repeat: no-repeat;
+            z-index: 0;
+        }
+
+        .shape2 {
+            transform: scaleY(2);
+            background-image: url("{{ url_for('static', filename="Rectangle 1042.png")}}");
+            position: fixed;
+            width: 424px;
+            height: 1613px;
+            left: 249px;
+            top: 0px;
+            background-repeat: no-repeat;
+            z-index: 0;
+        }
+
+        .shape3 {
+            transform: scaleY(2);
+            background-image: url("{{ url_for('static', filename="Rectangle 1043.png")}}");
+            position: fixed;
+            width: 421px;
+            height: 1347px;
+            left: 481px;
+            top: 0px;
+            background-repeat: no-repeat;
+            z-index: 0;
+        }
+
+        .shape5 {
+            transform: scaleY(2);
+            background-image: url("{{ url_for('static', filename="Rectangle 1045.png")}}");
+            position: fixed;
+            width: 362px;
+            height: 1220px;
+            left: 0px;
+            top: 0px;
+            background-repeat: no-repeat;
+            z-index: 0;
+        }
+
+        .shape6 {
+            transform: scaleY(2);
+            background-image: url("{{ url_for('static', filename="Rectangle 1046.png")}}");
+            position: fixed;
+            width: 154px;
+            height: 1191px;
+            left: 481px;
+            top: 0px;
+            background-repeat: no-repeat;
+            z-index: 0;
+        }
+
+        .navbar {
+            background: transparent;
+        }
+
+        .box {
+            color: #fff;
+            background: rgba(80, 113, 191, 0.8);
+            backdrop-filter: blur(2px);
+            border-radius: 10px;
+        }
+
+        a p h3 {
+            color: #fff;
+        }
+
+        .label {
+            color: #fff;
+        }
+
+        .title {
+            color: #fff;
+        }
+
+        .navbar {
+            box-shadow: none;
+        }
+
+        #header {
+            display: none !important;
+        }
+
+        #sidebar {
+            display: none !important;
+        }
+    #main{
+        margin-left: 0 !important;
+    }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="column is-4 is-offset-4">
+        <div class="shape1"></div>
+        <div class="shape2"></div>
+        <div class="shape3"></div>
+        <div class="shape5"></div>
+        <div class="shape6"></div>
+
+        <div class="box" style="text-align: center;z-index: 1">
+            <h3 class="title">Авторизация</h3>
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    <div class="notification is-danger">
+                        {{ messages[0] }}
+                    </div>
+                {% endif %}
+            {% endwith %}
+            <form method="POST" action="/check-code?phone={{ phone }}">
+                <div class="field">
+                    <div class="control">
+                        <p class="label">Код подтверждения</p>
+                        <input class="input" type="number" name="code" placeholder="Код" autofocus=""
+                               data-phone-pattern>
+                    </div>
+                </div>
+                <button class="button is-block is-info is-fullwidth" style="background-color: #002DA9;">Отправить</button>
+            </form>
+        </div>
+    </div>
+{% endblock %}

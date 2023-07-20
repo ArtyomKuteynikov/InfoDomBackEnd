@@ -1,0 +1,177 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="pagetitle">
+        <section class="section profile">
+            <div class="row">
+
+                <div class="col-xl-12">
+
+                    <div class="card">
+                        <div class="card-title">
+                            Карточка {% if user.org == 1 %} организации {% else %} жильца {% endif %}
+                        </div>
+                        <div class="card-body profile-card pt-4 d-flex flex-column align-items-center">
+                            <div class="col-xl-3" style="padding: 0;">
+                                {% if user.photo %}
+                                    <img src="{{ url_for('static', filename='profile_photos/'+user.photo) }}"
+                                         alt="Profile"
+                                         class="rounded-circle" style="height: 60px;"/>
+                                {% else %}
+                                    <h6 class="rounded-circle" style="height: 60px;max-width: 70px;">Нет фото</h6>
+                                {% endif %}
+                            </div>
+                            <div class="row" style="min-width: 100%">
+
+                                <div class="col-xl-12">
+                                    <p style="color:green">{{ user.points }} баллов</p>
+                                    <div class="row">
+                                        <div class="col-xl-6">
+                                            <b>DeviceID</b>
+                                            <p>{{ user.deviceId }}</p>
+                                        </div>
+                                        <div class="col-xl-6">
+                                            <b>OS</b>
+                                            <p>{{ user.os }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% if user.org == 1 %}
+                                <div class="input-group mb-3">
+                                    <input type="text" class="form-control"
+                                           value="{{ user.org_name }}" aria-describedby="button-addon1">
+                                    <div class="input-group-append">
+                                        <button class="btn btn-outline-secondary" type="button" id="button-addon1">X
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="input-group mb-3">
+                                    <input type="text" class="form-control" value="{{ user.inn }}"
+                                           aria-describedby="button-addon2">
+                                    <div class="input-group-append">
+                                        <button class="btn btn-outline-secondary" type="button" id="button-addon2">X
+                                        </button>
+                                    </div>
+                                </div>
+                            {% endif %}
+                            <div class="input-group mb-3">
+                                <input type="text" class="form-control" value="{{ user.name }}"
+                                       aria-describedby="button-addon3">
+                                <div class="input-group-append">
+                                    <button class="btn btn-outline-secondary" type="button" id="button-addon3">X
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="input-group mb-3">
+                                <input type="text" class="form-control" value="{{ user.surname }}"
+                                       aria-describedby="button-addon4">
+                                <div class="input-group-append">
+                                    <button class="btn btn-outline-secondary" type="button" id="button-addon4">X
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="input-group mb-3">
+                                <input type="text" class="form-control"
+                                       value="{{ jk.name }}" aria-describedby="button-addon5">
+                                <div class="input-group-append">
+                                    <button class="btn btn-outline-secondary" type="button" id="button-addon5">X
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="input-group mb-3">
+                                <input type="text" class="form-control"
+                                       value="{{ user.address }}"
+                                       aria-describedby="button-addon6">
+                                <div class="input-group-append">
+                                    <button class="btn btn-outline-secondary" type="button" id="button-addon6">X
+                                    </button>
+                                </div>
+                            </div>
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <td>Дата транзакции</td>
+                                    <td>Сумма, РУБ</td>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for i in user_transactions %}
+                                    <tr>
+                                        <td>{{ i.timestamp.strftime('%d.%m.%y') }}</td>
+                                        <td>{{ i.amount }}</td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                            <div class="row">
+                                <div style="padding:5px" class="col-xl-4">
+                                    <a href="user/{{ user.id }}" type="submit"
+                                       class="btn btn-primary">Редактировать</a>
+                                </div>
+                                <div style="padding:5px" class="col-xl-4">
+                                    <button type="submit" class="btn btn-primary">Связаться</button>
+                                </div>
+                                <div style="padding:5px" class="col-xl-4">
+                                    <button type="submit" class="btn btn-danger">Заблокировать</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xl-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">{% if user.org %} Новости пользователя {% else %} Объявления
+                                пользователя {% endif %}</h5>
+
+                            <!-- Default List group -->
+                            <ul class="list-group">
+                                {% for i in news %}
+                                    <a href="/new/{{ i.id }}">
+                                        <li class="list-group-item">{{ i.name }}</li>
+                                    </a>
+                                {% endfor %}
+                            </ul><!-- End Default List group -->
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                var eventCalllback = function (e) {
+                    var el = e.target,
+                        clearVal = el.dataset.phoneClear,
+                        pattern = el.dataset.phonePattern,
+                        matrix_def = "+7(___) ___-__-__",
+                        matrix = pattern ? pattern : matrix_def,
+                        i = 0,
+                        def = matrix.replace(/\D/g, ""),
+                        val = e.target.value.replace(/\D/g, "");
+                    if (clearVal !== 'false' && e.type === 'blur') {
+                        if (val.length < matrix.match(/([\_\d])/g).length) {
+                            e.target.value = '';
+                            return;
+                        }
+                    }
+                    if (def.length >= val.length) val = def;
+                    e.target.value = matrix.replace(/./g, function (a) {
+                        return /[_\d]/.test(a) && i < val.length ? val.charAt(i++) : i >= val.length ? "" : a
+                    });
+                }
+                var phone_inputs = document.querySelectorAll('[data-phone-pattern]');
+                for (let elem of phone_inputs) {
+                    for (let ev of ['input', 'blur', 'focus', 'load']) {
+                        elem.addEventListener(ev, eventCalllback);
+                    }
+                }
+            });
+        </script>
+    </div>
+{% endblock %}

@@ -1,0 +1,102 @@
+<!-- templates/index.html -->
+
+{% extends "base.html" %}
+
+{% block content %}
+    <style>
+        td {
+            max-width: 25vw;
+        }
+
+        table {
+            margin-top: 40px;
+        }
+
+        th div {
+            margin-top: -40px;
+            position: absolute;
+        }
+
+        /* design */
+        table {
+            border-collapse: collapse;
+        }
+
+        tr:nth-child(even) {
+            background: #EEE;
+        }
+    </style>
+    <h1 class="title">Статистика</h1>
+    <ul>
+        <li><b>Общее число зарегистрированных пользователей / Активных пользователей: </b>12 / 10</li>
+        <li><b>Общее количество жильцов / Активных жильцов: </b>5 / 4</li>
+        <li><b>Общее количество организаций / Активных организаций: </b>7 / 6</li>
+    </ul>
+    <div style="display: flex;">
+        <form method="POST" action="{{ url_for('chats.stats') }}"
+              style="display: flex;width: 85%;">
+            <input class="form-control" type="date" name="start" format="dd/mm/yyyy" value="{{ start }}"
+                   style="width: 35%;">
+            <input class="form-control" type="date" name="finish" format="dd/mm/yyyy" value="{{ finish }}"
+                   style="width: 35%;">
+            <button class="js-modal-trigger button is-primary" style="width: 30%;float: right;">
+                Отфильтровать по дате
+            </button>
+        </form>
+        <form method="GET" action="{{ url_for('chats.stats') }}"
+              style="display: flex;width: 15%;">
+            <button class="js-modal-trigger button is-primary" style="float: right;width:100%">
+                Сбросить фильтр
+            </button>
+        </form>
+    </div>
+    <table class="table is-striped" id="info-table" style="width: 100%; border-radius: 10px; height: 60vh">
+        <thead>
+        <tr>
+            <th>Дата регистрации</th>
+            <th>ID</th>
+            <th>DeviceID</th>
+            <th>OS</th>
+            <th>Жилец/Организация</th>
+            <th>Статус</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for i in data %}
+            <tr>
+                <td>
+                    {{ datetime.fromtimestamp(i.date).strftime('%d.%m.%y') }}
+                </td>
+                <td>
+                    {{ i.id }}
+                </td>
+                <td>
+                    {{ i.DeviceID }}
+                </td>
+                <td>
+                    {{ i.OS }}
+                </td>
+                <td>
+                    {% if i.org == 1 %}
+                        Организация
+                    {% else %}
+                        Жилец
+                    {% endif %}
+                </td>
+                <td>
+                    {% if i.status == 'active' %}
+                        Активный
+                    {% elif i.status == 'inactive' %}
+                        Не активный
+                    {% elif i.status == 'blocked' %}
+                        Заблокирован
+                    {% elif i.status == 'admin' %}
+                        Администратор
+                    {% else %}
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

@@ -1,0 +1,231 @@
+<!-- templates/profile.html -->
+
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="pagetitle">
+        <section class="section profile">
+            <div class="row">
+
+                <div class="col-xl-12">
+
+                    <div class="card">
+                        <div class="card-body pt-3">
+                            <!-- Bordered Tabs -->
+                            <ul class="nav nav-tabs nav-tabs-bordered">
+
+                                <li class="nav-item">
+                                    <button class="nav-link active" data-bs-toggle="tab"
+                                            data-bs-target="#profile-overview">
+                                        Профиль
+                                    </button>
+                                </li>
+
+                                <li class="nav-item">
+                                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-edit">
+                                        Редактировать профиль
+                                    </button>
+                                </li>
+
+                                <li class="nav-item">
+                                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-settings">
+                                        Настройки уведомлений
+                                    </button>
+                                </li>
+
+                                <li class="nav-item">
+                                    <button class="nav-link" data-bs-toggle="tab"
+                                            data-bs-target="#profile-change-password">
+                                        Сменить пароль
+                                    </button>
+                                </li>
+
+                            </ul>
+                            <div class="tab-content pt-2">
+
+                                <div class="tab-pane fade show active profile-overview" id="profile-overview">
+
+                                    <h5 class="card-title">Профиль</h5>
+
+                                    <div class="row">
+                                        <div class="col-lg-3 col-md-4 label ">Имя</div>
+                                        <div class="col-lg-9 col-md-8">{{ current_user.name }}</div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-lg-3 col-md-4 label ">Фамилия</div>
+                                        <div class="col-lg-9 col-md-8">{{ current_user.surname }}</div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-lg-3 col-md-4 label ">Телефон</div>
+                                        <div class="col-lg-9 col-md-8">{{ current_user.phone }}</div>
+                                    </div>
+
+                                </div>
+
+                                <div class="tab-pane fade profile-edit pt-3" id="profile-edit">
+
+                                    <!-- Profile Edit Form -->
+                                    <form>
+
+                                        <div class="row mb-3">
+                                            <label for="fullName" class="col-md-4 col-lg-3 col-form-label">Имя</label>
+                                            <div class="col-md-8 col-lg-9">
+                                                <input name="name" type="text" class="form-control" id="fullName"
+                                                       value="{{ current_user.name }}">
+                                            </div>
+                                        </div>
+
+                                        <div class="row mb-3">
+                                            <label for="fullName"
+                                                   class="col-md-4 col-lg-3 col-form-label">Фамилия</label>
+                                            <div class="col-md-8 col-lg-9">
+                                                <input name="name" type="text" class="form-control" id="fullName"
+                                                       value="{{ current_user.surname }}">
+                                            </div>
+                                        </div>
+
+                                        <div class="row mb-3">
+                                            <label for="fullName"
+                                                   class="col-md-4 col-lg-3 col-form-label">Телефон</label>
+                                            <div class="col-md-8 col-lg-9">
+                                                <input name="name" type="text" class="form-control" id="fullName"
+                                                       value="{{ current_user.phone }}" data-phone-pattern>
+                                            </div>
+                                        </div>
+
+                                        <div class="text-center">
+                                            <button type="submit" class="btn btn-primary">Сохранить</button>
+                                        </div>
+                                    </form><!-- End Profile Edit Form -->
+
+                                </div>
+
+                                <div class="tab-pane fade pt-3" id="profile-settings">
+
+                                    <!-- Settings Form -->
+                                    <form>
+
+                                        <div class="row mb-3">
+                                            <label for="fullName"
+                                                   class="col-md-4 col-lg-3 col-form-label">Уведомления</label>
+                                            <div class="col-md-8 col-lg-9">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" id="changesMade"
+                                                           checked>
+                                                    <label class="form-check-label" for="changesMade">
+                                                        Регистрация пользователей
+                                                    </label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" id="newProducts"
+                                                           checked>
+                                                    <label class="form-check-label" for="newProducts">
+                                                        Запросы на привязку домов к ЖК
+                                                    </label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" id="proOffers"
+                                                           checked>
+                                                    <label class="form-check-label" for="proOffers">
+                                                        Уведомления о запросах в поддержку
+                                                    </label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" id="securityNotify">
+                                                    <label class="form-check-label" for="securityNotify">
+                                                        Уведомления о жалобах
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="text-center">
+                                            <button type="submit" class="btn btn-primary">Сохранить</button>
+                                        </div>
+                                    </form><!-- End settings Form -->
+
+                                </div>
+
+                                <div class="tab-pane fade pt-3" id="profile-change-password">
+                                    <!-- Change Password Form -->
+                                    <form>
+
+                                        <div class="row mb-3">
+                                            <label for="currentPassword" class="col-md-4 col-lg-3 col-form-label">
+                                                Ваш пароль
+                                            </label>
+                                            <div class="col-md-8 col-lg-9">
+                                                <input name="password" type="password" class="form-control"
+                                                       id="currentPassword">
+                                            </div>
+                                        </div>
+
+                                        <div class="row mb-3">
+                                            <label for="newPassword" class="col-md-4 col-lg-3 col-form-label">
+                                                Новый пароль
+                                            </label>
+                                            <div class="col-md-8 col-lg-9">
+                                                <input name="newpassword" type="password" class="form-control"
+                                                       id="newPassword">
+                                            </div>
+                                        </div>
+
+                                        <div class="row mb-3">
+                                            <label for="renewPassword" class="col-md-4 col-lg-3 col-form-label">
+                                                Подтвердите пароль
+                                            </label>
+                                            <div class="col-md-8 col-lg-9">
+                                                <input name="renewpassword" type="password" class="form-control"
+                                                       id="renewPassword">
+                                            </div>
+                                        </div>
+
+                                        <div class="text-center">
+                                            <button type="submit" class="btn btn-primary">Сохранить</button>
+                                        </div>
+                                    </form><!-- End Change Password Form -->
+
+                                </div>
+
+                            </div><!-- End Bordered Tabs -->
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var eventCalllback = function (e) {
+                var el = e.target,
+                    clearVal = el.dataset.phoneClear,
+                    pattern = el.dataset.phonePattern,
+                    matrix_def = "+7(___) ___-__-__",
+                    matrix = pattern ? pattern : matrix_def,
+                    i = 0,
+                    def = matrix.replace(/\D/g, ""),
+                    val = e.target.value.replace(/\D/g, "");
+                if (clearVal !== 'false' && e.type === 'blur') {
+                    if (val.length < matrix.match(/([\_\d])/g).length) {
+                        e.target.value = '';
+                        return;
+                    }
+                }
+                if (def.length >= val.length) val = def;
+                e.target.value = matrix.replace(/./g, function (a) {
+                    return /[_\d]/.test(a) && i < val.length ? val.charAt(i++) : i >= val.length ? "" : a
+                });
+            }
+            var phone_inputs = document.querySelectorAll('[data-phone-pattern]');
+            for (let elem of phone_inputs) {
+                for (let ev of ['input', 'blur', 'focus', 'load']) {
+                    elem.addEventListener(ev, eventCalllback);
+                }
+            }
+        });
+    </script>
+{% endblock %}

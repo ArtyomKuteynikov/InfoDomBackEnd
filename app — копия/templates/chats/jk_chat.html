@@ -1,0 +1,222 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <script type="text/javascript" charset="utf-8">
+        var socket;
+        $(document).ready(function () {
+            socket = io.connect('http://' + document.domain + ':' + location.port + '/chat');
+            $('#chat').scrollTop($('#chat')[0].scrollHeight);
+            socket.on('connect', function () {
+                socket.emit('joined', {});
+            });
+            socket.on('message', function (data) {
+                console.log(data);
+                if (data.author === {{current_user.id}}) {
+                    var message = '<div class="d-flex flex-row justify-content-end">' +
+                        '<p class="small p-2 me-3 mb-1 text-white rounded-3 bg-primary">' + data.msg + '</p>' +
+                        '<p class="small ms-3 mb-3 rounded-3 text-muted">' + data.time + '</p>' +
+                        '</div></div>';
+                } else {
+                    var message = '<div class="d-flex flex-row justify-content-start">' +
+                        '<img  class="rounded-circle" src="' + data.avatar + '" alt="avatar 1" style="width: 45px; height: 100%;">' +
+                        '<p class="small p-2 ms-3 mb-1 rounded-3" style="background-color: #f5f6f7;">' + data.msg + '</p>' +
+                        '<p class="small ms-3 mb-3 rounded-3 text-muted">' + data.time + '</p>' +
+                        '</div></div>';
+                }
+                console.log(message);
+                $('#chat').append(message);
+                //.val($('#chat').val() + message + '\n');
+                $('#chat').scrollTop($('#chat')[0].scrollHeight);
+            });
+            $('#send').click(function (e) {
+                text = $('#text').val();
+                $('#text').val('');
+                socket.emit('text', {msg: text, author: {{current_user.id}}, chat: {{ chat_id }}});
+            });
+            $('#text').keypress(function (e) {
+                var code = e.keyCode || e.which;
+                if (code == 13) {
+                    text = $('#text').val();
+                    $('#text').val('');
+                    socket.emit('text', {msg: text, author: {{current_user.id}}, chat: {{ chat_id }}});
+                }
+            });
+        });
+
+        function leave_room() {
+            socket.emit('left', {}, function () {
+                socket.disconnect();
+            });
+        }
+    </script>
+    <style>
+
+        body {
+            margin-top: 20px;
+            font-size: 16px !important;
+        }
+
+        .chat-online {
+            color: #34ce57
+        }
+
+        .chat-offline {
+            color: #e4606d
+        }
+
+        .chat-messages {
+            display: flex;
+            flex-direction: column;
+            max-height: 800px;
+            overflow-y: scroll
+        }
+
+        .chat-message-left,
+        .chat-message-right {
+            display: flex;
+            flex-shrink: 0
+        }
+
+        .chat-message-left {
+            margin-right: auto
+        }
+
+        .chat-message-right {
+            flex-direction: row-reverse;
+            margin-left: auto
+        }
+
+        .py-3 {
+            padding-top: 1rem !important;
+            padding-bottom: 1rem !important;
+        }
+
+        .px-4 {
+            padding-right: 1.5rem !important;
+            padding-left: 1.5rem !important;
+        }
+
+        .flex-grow-0 {
+            flex-grow: 0 !important;
+        }
+
+        .border-top {
+            border-top: 1px solid #dee2e6 !important;
+        }
+
+        .position-relative {
+            border-radius: 15px;
+            background: linear-gradient(101.4deg, rgba(215, 196, 255, 0.9) 4.99%, rgba(172, 195, 255, 0.9) 41.07%, rgba(150, 186, 255, 0.9) 71.28%, rgba(155, 181, 255, 0.9) 100%);
+        }
+
+        .card-body {
+            padding: 0 !important;
+        }
+
+        .bi {
+            font-size: 25px;
+        }
+
+        #chat {
+            overflow: auto;
+        }
+
+        .pt-1 {
+            padding-top: 0.25rem !important;
+            text-align: left !important;
+        }
+
+        .short {
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    </style>
+
+    <div class="container p-0">
+
+        <div class="row">
+            <div class="col-md-12">
+
+                <div class="card" id="chat3" style="border-radius: 15px;">
+                    <div class="card-header d-flex justify-content-between align-items-center p-3 border-bottom-0"
+                         style="border-top-left-radius: 15px; border-top-right-radius: 15px;">
+                        <a href="{{ url_for('main.jk_chats') }}"><i class="bi bi-arrow-left-square"></i></a>
+                        <p class="mb-0 fw-bold">
+                            <i class="bi bi-building" style="font-size: 40px"></i>
+                            <a href="/jk/all?jk={{ jk.id }}">
+                                {{ jk.name }}</a>
+                        </p>
+                        <a href="{{ url_for('main.members', id=chat_id) }}"><i class="bi bi-people"></i></a>
+                    </div>
+                    <div class="card-body">
+                        <div class="row" style="margin: 0">
+
+                            <div class="col-md-12 col-lg-12 col-xl-12 position-relative">
+
+                                <div class="pt-3 pe-3" data-mdb-perfect-scrollbar="true"
+                                     style="position: relative; height: 400px" id="chat">
+                                    {% for msg in msgs %}
+                                        {% if msg.author != current_user.id %}
+                                            <div class="d-flex flex-row justify-content-start">
+                                                <img src="{{ url_for('static', filename='profile_photos/'+msg.profile_photo) }}"
+                                                     alt="avatar 1" style="width: 45px; height: 100%;"
+                                                     class="rounded-circle">
+                                                <div>
+                                                    <p class="small p-2 ms-3 mb-1 rounded-3"
+                                                       style="background-color: #f5f6f7;">{{ msg.text }}</p>
+                                                    <p class="small ms-3 mb-3 rounded-3 text-muted float-end">{{ msg.time }}</p>
+                                                </div>
+                                            </div>
+                                        {% else %}
+                                            <div class="d-flex flex-row justify-content-end">
+                                                <div>
+                                                    <p class="small p-2 me-3 mb-1 text-white rounded-3 bg-primary">{{ msg.text }}</p>
+                                                    <p class="small ms-3 mb-3 rounded-3 text-muted">{{ msg.time }}</p>
+                                                </div>
+                                            </div>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+
+                                <div class="text-muted d-flex justify-content-start align-items-center pe-3 pt-3 mt-2">
+                                    <input type="text" class="form-control form-control-lg"
+                                           id="text"
+                                           placeholder="Type message">
+                                    <a class="ms-1 text-muted" href="#!"><i class="bi bi-paperclip"></i></a>
+                                    <button type="submit" class="btn ms-3" id="send"><i class="bi bi-send"></i></button>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        function myFunction() {
+            var input, filter, ul, li, a, i, txtValue;
+            input = document.getElementById("search");
+            filter = input.value.toUpperCase();
+            ul = document.getElementById("chats");
+            li = ul.getElementsByTagName("li");
+            for (i = 0; i < li.length; i++) {
+                a = li[i].getElementsByClassName("fw-bold")[0];
+
+                txtValue = a.textContent || a.innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    li[i].style.setProperty('display', 'block', 'important');
+                } else {
+                    li[i].style.setProperty('display', 'none', 'important');
+                }
+            }
+        }
+    </script>
+
+
+
+{% endblock %}

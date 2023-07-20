@@ -1,0 +1,153 @@
+<!-- templates/stats.html -->
+
+{% extends "base.html" %}
+
+{% block content %}
+    <style>
+        h6 {
+            font-size: 28px !important;
+            color: #012970 !important;
+            font-weight: 700 !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+
+        label {
+            font-size: 15px;
+            font-weight: 600;
+            color: #4154f1;
+            padding: 10px 15px;
+            border-radius: 4px;
+        }
+
+        li .form-control {
+            width: 90%;
+        }
+    </style>
+
+    <div>
+        <form method="POST" action="#" class="row">
+            <div class="col-lg-2">
+                <select class="form-select" id="city" onchange="myFunction_1()">
+                    <option value="ВСЕ" selected>ВСЕ</option>
+                    {% for city in cities %}
+                        <option value="{{ city[0] }}">{{ city[0] }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-lg-2">
+                <select class="form-select" id="city" onchange="myFunction_1()">
+                    <option value="ВСЕ" selected>ВСЕ</option>
+                    {% for city in jks %}
+                        <option value="{{ city[0] }}">{{ city[0] }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-lg-2">
+                <select class="form-select" id="city" onchange="myFunction_1()">
+                    <option value="ВСЕ" selected>ВСЕ</option>
+                    {% for city in addresses %}
+                        <option value="{{ city[0] }}">{{ city[0] }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-lg-2">
+                <select class="form-select" id="city" onchange="myFunction_1()">
+                    <option value="ВСЕ" selected>ВСЕ</option>
+                    <option value="Новость">Новость</option>
+                    <option value="Объявление">Объявление</option>
+                </select>
+            </div>
+            <div class="col-lg-2">
+                <button class="btn btn-light">
+                    Отфильтровать
+                </button>
+            </div>
+            <div class="col-lg-2">
+                <a href="#" class="btn btn-light">
+                    Сбросить фильтр
+                </a>
+            </div>
+        </form>
+    </div>
+    {% for jk in news %}
+        <section class="section profile">
+            <div class="row">
+                <div class="col-xl-12">
+                    <div class="card">
+                        <div class="card-body pt-3">
+                            <div class="tab-content pt-2">
+                                <!-- Profile Edit Form -->
+                                <form>
+
+                                    <div class="row mb-3">
+                                        <label for="fullName" class="col-md-4 col-lg-4 col-form-label">Заголовок</label>
+                                        <div class="col-md-8 col-lg-8">
+                                            <input name="fullName" type="text" class="form-control" id="fullName"
+                                                   value="{{ jk.name }}">
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <label for="fullName" class="col-md-4 col-lg-4 col-form-label">Автор</label>
+                                        <div class="col-md-8 col-lg-8">
+                                            <a href="/user/{{ jk.author }}">{{ User.query.filter_by(id=jk.author).first().name }} {{ User.query.filter_by(id=jk.author).first().surname }}</a>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <label for="fullName" class="col-md-4 col-lg-4 col-form-label">Телефон</label>
+                                        <div class="col-md-8 col-lg-8">
+                                            <input name="fullName" type="text" class="form-control" id="fullName"
+                                                   value="{{ jk.phone }}">
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <label for="fullName" class="col-md-4 col-lg-4 col-form-label">Адрес</label>
+                                        <div class="col-md-8 col-lg-8">
+                                            <input name="fullName" type="text" class="form-control" id="fullName"
+                                                   value="{{ jk.address }}">
+                                        </div>
+                                    </div>
+
+                                    {% if jk.price %}
+                                        <div class="row mb-3">
+                                            <label for="fullName"
+                                                   class="col-md-4 col-lg-4 col-form-label">Цена</label>
+                                            <div class="col-md-8 col-lg-8">
+                                                <input name="fullName" type="text" class="form-control" id="fullName"
+                                                       value="{{ jk.price }}">
+                                            </div>
+                                        </div>
+                                    {% endif %}
+
+                                    <div class="row mb-3">
+                                        <label for="fullName" class="col-md-4 col-lg-4 col-form-label">Текст
+                                            объявления</label>
+                                        <div class="col-md-8 col-lg-8">
+                                            <input name="fullName" type="text" class="form-control" id="fullName"
+                                                   value="{{ jk.description }}">
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="text-center col-lg-6">
+                                            <button type="submit" class="btn btn-primary">Сохранить</button>
+                                        </div>
+                                        <div class="text-center col-lg-6">
+                                            <button type="submit" class="btn btn-danger">Удалить</button>
+                                        </div>
+                                    </div>
+
+                                </form><!-- End Profile Edit Form -->
+                            </div><!-- End Bordered Tabs -->
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+    {% endfor %}
+
+{% endblock %}

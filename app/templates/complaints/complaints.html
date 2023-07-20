@@ -1,0 +1,215 @@
+<!-- templates/stats.html -->
+
+{% extends "base.html" %}
+
+{% block content %}
+    <style>
+        #openFile {
+            display: none;
+        }
+
+        form {
+            margin: 20px;
+        }
+
+        .card-title {
+            font-size: 16px;
+        }
+
+        .form-control {
+            font-size: 12px;
+        }
+
+        .btn {
+            font-size: 12px;
+        }
+
+        .tab.active {
+            background-color: #5071BF4D !important;
+        }
+
+
+        .tab:hover {
+            background-color: #5071BF4D !important;
+        }
+
+        tr.active {
+            background-color: #5071BF4D !important;
+        }
+
+        p {
+            font-size: 12px;
+        }
+
+
+        tr:hover {
+            background-color: #5071BF4D !important;
+        }
+
+        table {
+            margin-top: 40px;
+        }
+
+        th div {
+            margin-top: -40px;
+            position: absolute;
+        }
+
+        /* design */
+        table {
+            border-collapse: collapse;
+        }
+
+        tr:nth-child(even) {
+            background: #EEE;
+        }
+
+        p.mytabs {
+            margin: 0;
+        }
+
+    </style>
+    <h1 class="title">Обращения пользователей</h1>
+    <div class="row">
+
+        <div class="{% if user %}col-xl-8{% else %}col-xl-12{% endif %}">
+            <form method="POST" action="{{ url_for('main.support') }}" class="row">
+                <div class="col-lg-3">
+                    {% if start %}
+                        <input class="form-control col" type="date" name="start" format="dd/mm/yyyy"
+                               value="{{ start }}">
+                    {% else %}
+                        <input class="form-control col" type="date" name="start" format="dd/mm/yyyy">
+                    {% endif %}
+                </div>
+                <div class="col-lg-3">
+                    {% if finish %}
+                        <input class="form-control col" type="date" name="finish" format="dd/mm/yyyy"
+                               value="{{ finish }}">
+                    {% else %}
+                        <input class="form-control col" type="date" name="finish" format="dd/mm/yyyy">
+                    {% endif %}
+                </div>
+                <div class="col-lg-3">
+                    <button class="btn btn-light">
+                        Фильтр
+                    </button>
+                </div>
+                <div class="col-lg-3">
+                    <a href="{{ url_for('main.support', active=active, org=org) }}" class="btn btn-light">
+                        Сброс
+                    </a>
+                </div>
+            </form>
+            <div class="card">
+                <div class="card-body pt-3">
+                    <div style="overflow-x:auto;">
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th scope="col">ID</th>
+                                <th scope="col">Дата</th>
+                                <th scope="col">ФИО</th>
+                                <th scope="col">Телефон</th>
+                                <th scope="col">Жилой комплекс</th>
+                                <th scope="col">Страница</th>
+                                <th scope="col">Статус</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for i in complaints %}
+                                <tr onclick="showHideRow('hidden_row{{ i.id }}');"
+                                    class="">
+                                    <td>
+                                        {{ i.id }}
+                                    </td>
+                                    <td>
+                                        {{ i.date }}
+                                    </td>
+                                    <td>
+                                        {{ i.name.replace('None None', 'Не задано').replace('None', 'Не задано') }}
+                                    </td>
+                                    <td>
+                                        {{ i.phone }}
+                                    </td>
+                                    <td>
+                                        {{ i.jk }}
+                                    </td>
+                                    <td>
+                                        {% if i.type == 'promotion' %}
+                                            Объявление
+                                        {% elif i.type == 'new' %}
+                                            Новость
+                                        {% elif i.type == 'profile' %}
+                                            Профиль
+                                        {% elif i.type == 'message' %}
+                                            Сообщение
+                                        {% else %}
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if i.status == 0 %}
+                                            В работе
+                                        {% elif i.status == 1 %}
+                                            Решена
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                <tr id="hidden_row{{ i.id }}" class="hidden_row">
+                                    <td colspan="10">
+                                        {% if i.type == 'promotion' %}
+                                            <a class="btn btn-info" href="">Объявление</a>
+                                        {% elif i.type == 'new' %}
+                                            <a class="btn btn-info" href="/new/{{ i.page }}">Новость</a>
+                                        {% elif i.type == 'profile' %}
+                                            <a class="btn btn-info" href="/user/{{ i.page }}">Профиль</a>
+                                        {% elif i.type == 'message' %}
+                                            Сообщение
+                                        {% else %}
+                                        {% endif %}
+                                        {% if i.status == 0 %}
+                                            <form method="post" action="{{ url_for('main.reply_complaint', id=i.id) }}">
+                                                <h6>Текст жалобы:</h6>
+                                                <p>{{ i.text }}</p>
+
+                                                <h6>Ответ на жалобу:</h6>
+                                                <textarea class="form-control" name="text"
+                                                          style="margin-bottom: 10px;height: 100px"></textarea>
+                                                <div class="row">
+                                                    <div class="col-lg-12" style="display: flex">
+                                                        <input class="left form-control" type="file" name="image"
+                                                               id="openFile">
+                                                        <label for="openFile" class="btn btn-light" href="">Прикрепить
+                                                            файл</label>
+                                                        <button class="right btn btn-primary">Отправить</button>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        {% else %}
+                                            <form>
+                                                <h6>Текст жалобы:</h6>
+                                                <p>{{ i.text }}</p>
+
+                                                <h6>Ответ на жалобу:</h6>
+                                                <textarea class="form-control" name="text" style="margin-bottom: 10px;height: 100px"
+                                                          value="{{ i.reply }}" disabled>{{ i.reply }}</textarea>
+                                                <div class="row">
+                                                    <div class="col-lg-12" style="display: flex">
+                                                        <a href="/connect/{{ i.user }}" class="right btn btn-primary">
+                                                                    Перейти в чат
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,216 @@
+<!-- templates/stats.html -->
+
+{% extends "base.html" %}
+
+{% block content %}
+    <style>
+
+        .card-title {
+            font-size: 16px;
+        }
+
+        .form-control {
+            font-size: 12px;
+        }
+
+        .btn {
+            font-size: 12px;
+        }
+
+        .tab.active {
+            background-color: #5071BF4D !important;
+        }
+
+
+        .tab:hover {
+            background-color: #5071BF4D !important;
+        }
+
+        tr.active {
+            background-color: #5071BF4D !important;
+        }
+
+        p {
+            font-size: 12px;
+        }
+
+
+        tr:hover {
+            background-color: #5071BF4D !important;
+        }
+
+        table {
+            margin-top: 40px;
+        }
+
+        th div {
+            margin-top: -40px;
+            position: absolute;
+        }
+
+        /* design */
+        table {
+            border-collapse: collapse;
+        }
+
+        tr:nth-child(even) {
+            background: #EEE;
+        }
+
+        p.mytabs {
+            margin: 0;
+        }
+
+    </style>
+    <h1 class="title">Управляющие компании</h1>
+    <div class="row">
+
+        <div class="col-xl-12">
+            <form method="POST" action="{{ url_for('main.stats', active=active, org=org, uk=uk) }}" class="row">
+                <div class="col-lg-4">
+                    <input class="form-control col" type="date" name="start" format="dd/mm/yyyy" value="{{ start }}">
+                </div>
+                <div class="col-lg-4">
+                    <input class="form-control col" type="date" name="finish" format="dd/mm/yyyy" value="{{ finish }}">
+                </div>
+                <div class="col-lg-2">
+                    <button class="btn btn-light">
+                        Фильтр
+                    </button>
+                </div>
+                <div class="col-lg-2">
+                    <a href="{{ url_for('main.stats', active=active, org=org) }}" class="btn btn-light">
+                        Сброс
+                    </a>
+                </div>
+            </form>
+            <div class="card">
+                <div class="card-body pt-3">
+                    <div style="overflow-x:auto;">
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th scope="col">ID</th>
+                                <th scope="col">Дата</th>
+                                <th scope="col">Организация</th>
+                                <th scope="col">ИНН</th>
+                                <th scope="col">Жилой комплекс</th>
+                                <th scope="col">ФИО</th>
+                                <th scope="col">Город</th>
+                                <th scope="col">Адрес</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for i in data %}
+                                <tr onclick="showHideRow('hidden_row{{ i.id }}');">
+                                    <td>
+                                        {{ i.id }}
+                                    </td>
+                                    <td>
+                                        {{ datetime.fromtimestamp(i.registered).strftime('%d.%m.%y') }}
+                                    </td>
+
+                                    <td>{{ i.org_name }}</td>
+                                    <td>{{ i.inn }}</td>
+                                    <td>
+                                        {% if JK.query.filter_by(id=i.jk, moderated=1).first() %}
+                                            {{ JK.query.filter_by(id=i.jk).first().name }}
+                                        {% else %}
+                                            На модерации
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {{ str(i.name + ' ' + i.surname + ' ' + i.second_name) }}
+                                    </td>
+                                    <td>
+                                        {% if JK.query.filter_by(id=i.jk, moderated=1).first() %}
+                                            {{ JK.query.filter_by(id=i.jk).first().city }}
+                                        {% else %}
+                                            На модерации
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {{ i.address }}
+                                    </td>
+                                </tr>
+                                <tr id="hidden_row{{ i.id }}" class="hidden_row">
+                                    <td colspan="10">
+                                        <h6>Привязать УК к дому</h6>
+                                        <div class="row">
+
+                                            <div class="col-lg-2">
+                                                <p>Организация</p>
+                                                <div class="input-group mb-3">
+                                                    <input type="text" class="form-control"
+                                                           value="{{ i.org_name }}" aria-describedby="button-addon1">
+                                                    <div class="input-group-append">
+                                                        <button class="btn btn-outline-secondary" type="button"
+                                                                id="button-addon1">X
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-2">
+                                                <p>ИНН</p>
+                                                <div class="input-group mb-3">
+                                                    <input type="text" class="form-control"
+                                                           value="{{ i.inn }}" aria-describedby="button-addon2">
+                                                    <div class="input-group-append">
+                                                        <button class="btn btn-outline-secondary" type="button"
+                                                                id="button-addon2">X
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-2">
+                                                <p>ЖК</p>
+                                                <div class="input-group mb-3">
+                                                    <input type="text" class="form-control"
+                                                           value="{{ JK.query.filter_by(id=i.jk).first().name }}"
+                                                           aria-describedby="button-addon3">
+                                                    <div class="input-group-append">
+                                                        <button class="btn btn-outline-secondary" type="button"
+                                                                id="button-addon3">X
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-2">
+                                                <p>Город</p>
+                                                <div class="input-group mb-3">
+                                                    <input type="text" class="form-control"
+                                                           value="{{ JK.query.filter_by(id=i.jk).first().city }}"
+                                                           aria-describedby="button-addon4">
+                                                    <div class="input-group-append">
+                                                        <button class="btn btn-outline-secondary" type="button"
+                                                                id="button-addon4">X
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-lg-4">
+                                                <p>Адрес</p>
+                                                <div class="input-group mb-3">
+                                                    <input type="text" class="form-control"
+                                                           value="{{ i.address }}" aria-describedby="button-addon5">
+                                                    <div class="input-group-append">
+                                                        <button class="btn btn-outline-secondary" type="button"
+                                                                id="button-addon5">X
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <button class="btn btn-primary">Привязать</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

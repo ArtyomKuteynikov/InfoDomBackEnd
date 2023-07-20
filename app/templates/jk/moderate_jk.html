@@ -1,0 +1,300 @@
+<!-- templates/stats.html -->
+
+{% extends "base.html" %}
+
+{% block content %}
+    <style>
+        .list-group {
+            max-height: 50vh;
+            overflow: auto;
+        }
+
+        .card-title {
+            font-size: 16px;
+        }
+
+        .form-control {
+            font-size: 12px;
+        }
+
+        .form-select {
+            font-size: 12px;
+        }
+
+        .btn {
+            font-size: 12px;
+        }
+
+
+        .tab.active {
+            color: #000;
+            background-color: #5071BF4D !important;
+        }
+
+
+        .tab:hover {
+            background-color: #5071BF4D !important;
+        }
+
+        td {
+            text-align: center !important;
+        }
+
+        tr.active {
+            background-color: #5071BF4D !important;
+        }
+
+        p {
+            font-size: 12px;
+        }
+
+
+        tr:hover {
+            background-color: #5071BF4D !important;
+        }
+
+        table {
+            margin-top: 40px;
+        }
+
+        th div {
+            margin-top: -40px;
+            position: absolute;
+        }
+
+        /* design */
+        table {
+            border-collapse: collapse;
+        }
+
+        tr:nth-child(even) {
+            background: #EEE;
+        }
+
+        p.mytabs {
+            font-size: 16px;
+            margin: 1;
+        }
+
+        .break {
+            text-align: left;
+        }
+
+        .space-between {
+            justify-content: space-between;
+            padding: 15px;
+        }
+
+        .space-between > * {
+            width: auto;
+        }
+
+        .suggestions-wrapper {
+            position: absolute;
+            margin: 33px 0 0 0;
+            width: 100%;
+        }
+    </style>
+    <section class="section profile">
+        <div class="row">
+            <div class="col-lg-3">
+                <div class="card tab"
+                     onclick="window.location.href='/jk/all'; return false">
+                    <div class="">
+                        <p class="mytabs"></p>
+                        <p class="mytabs">Главная</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3">
+                <div class="card tab active"
+                     onclick="window.location.href='/jk/moderate'; return false">
+                    <div class="">
+                        <p class="mytabs"></p>
+                        <p class="mytabs">Модерация ЖК</p>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card">
+                    <div class="card-body pt-3">
+                        <div style="overflow-x:auto;">
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th scope="col">ID</th>
+                                    <th scope="col">Название</th>
+                                    <th scope="col">Город</th>
+                                    <th scope="col">Кол-во зарегистрированных жильцов</th>
+                                    <th scope="col">Кол-во зарегистрированных организаций</th>
+                                    <th scope="col">Кол-во объявлений</th>
+                                    <th scope="col">Кол-во новостей</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for jk in jks %}
+                                    <tr onclick="showHideRow('hidden_row{{ jk.id }}');">
+                                        <td>{{ jk.id }}</td>
+                                        <td class="jk-name">{{ jk.name }}</td>
+                                        <td class="jk-city">{{ jk.city }}</td>
+                                        <td>{{ jk.num_people }}</td>
+                                        <td>{{ jk.num_orgs }}</td>
+                                        <td>{{ jk.num_proms }}</td>
+                                        <td>{{ jk.num_news }}</td>
+                                    </tr>
+                                    <tr id="hidden_row{{ jk.id }}" class="hidden_row">
+                                        <td colspan="7">
+                                            <form method="post" action="/moderate_jk/{{ jk.id }}">
+                                                <h6>Привязать УК к дому</h6>
+                                                <div class="row" id="rows_{{ jk.id }}">
+                                                    <div class="deletable" style="display: flex">
+                                                        <div class="col-lg-3">
+                                                            <p>Название</p>
+                                                            <div class="input-group mb-3">
+                                                                <input type="text" class="form-control"
+                                                                       value="{{ jk.name }}" name="name"
+                                                                       aria-describedby="button-addon1">
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-lg-3">
+                                                            <p class="left">Город</p>
+                                                            <div class="input-group mb-3">
+                                                                <input type="text" class="form-control"
+                                                                       value="{{ jk.city }}" name="city"
+                                                                       aria-describedby="button-addon2">
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-lg-6">
+                                                            <p>Адрес</p>
+                                                            <div class="input-group mb-3">
+                                                                <input type="text" name="fullName1" class="form-control address-input"
+                                                                       value="{{ addrs[jk.id][0] }}"
+                                                                       aria-describedby="remove_{{ jk.id }}">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    {% for i in addrs[jk.id][1:] %}
+                                                        <div class="deletable" style="display: flex">
+                                                            <div class="col-lg-3" style="opacity: 0">
+                                                                <p>Название</p>
+                                                                <div class="input-group mb-3">
+                                                                    <input type="text" class="form-control"
+                                                                           value=""
+                                                                           aria-describedby="button-addon1">
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-lg-3" style="opacity: 0">
+                                                                <p class="left">Город</p>
+                                                                <div class="input-group mb-3">
+                                                                    <input type="text" class="form-control"
+                                                                           value=""
+                                                                           aria-describedby="button-addon2">
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-lg-6">
+                                                                <p>Адрес</p>
+                                                                <div class="input-group mb-3">
+                                                                    <input type="text" name="fullName1"
+                                                                           class="form-control address-input"
+                                                                           value="{{ i }}"
+                                                                           aria-describedby="remove_{{ jk.id }}">
+                                                                    <div class="input-group-append">
+                                                                        <button class="btn btn-outline-secondary remove"
+                                                                                type="button"
+                                                                                id="remove_{{ jk.id }}">X
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    {% endfor %}
+                                                </div>
+                                                <div class="">
+                                                    <div class="col-lg-12" style="display: flex">
+                                                        <div class="right">
+                                                            <a class="btn btn-primary" id="add_{{ jk.id }}">
+                                                                Добавить
+                                                                дом
+                                                            </a>
+                                                            <button type="submit" class="btn btn-primary">Сохранить
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </td>
+                                    </tr>
+
+                                    <script>
+                                        $(document).ready(function () {
+                                            var max_fields = 10;
+                                            var wrapper = $("#rows_{{ jk.id }}");
+                                            var add_button = $("#add_{{ jk.id }}");
+
+                                            var x = 1;
+                                            $(add_button).click(function (e) {
+                                                console.log('add');
+                                                e.preventDefault();
+                                                if (x < max_fields) {
+                                                    x++;
+                                                    $(wrapper).append('<div class="deletable" style="display: flex">\n' +
+                                                        '                                                <div class="col-lg-3" style="opacity: 0">\n' +
+                                                        '                                                    <p>Название</p>\n' +
+                                                        '                                                    <div class="input-group mb-3">\n' +
+                                                        '                                                        <input type="text" class="form-control"\n' +
+                                                        '                                                               disabled\n' +
+                                                        '                                                               aria-describedby="button-addon1">\n' +
+                                                        '                                                    </div>\n' +
+                                                        '                                                </div>\n' +
+                                                        '                                                <div class="col-lg-3" style="opacity: 0">\n' +
+                                                        '                                                    <p>Город</p>\n' +
+                                                        '                                                    <div class="input-group mb-3">\n' +
+                                                        '                                                        <input type="text" class="form-control"\n' +
+                                                        '                                                               disabled aria-describedby="button-addon2">\n' +
+                                                        '                                                    </div>\n' +
+                                                        '                                                </div>\n' +
+                                                        '                                                <div class="col-lg-6">\n' +
+                                                        '                                                    <p>Адрес</p>\n' +
+                                                        '                                                    <div class="input-group mb-3">\n' +
+                                                        '                                                        <input type="text" class="form-control address-input"\n' +
+                                                        '                                                               value="{{ jk.city }}" name="fullName' + x + '"\n' +
+                                                        '                                                               aria-describedby="remove_{{ jk.id }}">\n' +
+                                                        '                                                        <div class="input-group-append">\n' +
+                                                        '                                                    <button class="btn btn-outline-secondary remove" type="button"\n' +
+                                                        '                                                            id="remove_{{ jk.id }}">X\n' +
+                                                        '                                                    </button>\n' +
+                                                        '                                                        </div>\n' +
+
+                                                        '                                                    </div>\n' +
+                                                        '                                                </div>\n' +
+                                                        '                                            </div>'); //add input box
+                                                    add_suggestions();
+
+                                                } else {
+                                                    alert('Максимум 10 адресов')
+                                                }
+                                            });
+
+                                            $(wrapper).on("click", ".remove", function (e) {
+                                                console.log('remove');
+                                                e.preventDefault();
+                                                $(this).closest('.deletable').remove();
+                                                x--;
+                                            });
+                                        });
+                                    </script>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+{% endblock %}

@@ -1,0 +1,153 @@
+<!-- templates/stats.html -->
+
+{% extends "base.html" %}
+
+{% block content %}
+    <style>
+        .list-group {
+            max-height: 50vh;
+            overflow: auto;
+        }
+
+        .card-title {
+            font-size: 16px;
+        }
+
+        .form-control {
+            font-size: 12px;
+        }
+
+        .form-select {
+            font-size: 12px;
+        }
+
+        .btn {
+            font-size: 12px;
+        }
+
+
+        .tab.active {
+            color: #000;
+            background-color: #5071BF4D !important;
+        }
+
+
+        .tab:hover {
+            background-color: #5071BF4D !important;
+        }
+
+        tr.active {
+            background-color: #5071BF4D !important;
+        }
+
+        p {
+            font-size: 12px;
+        }
+
+
+        tr:hover {
+            background-color: #5071BF4D !important;
+        }
+
+        table {
+            margin-top: 40px;
+        }
+
+        th div {
+            margin-top: -40px;
+            position: absolute;
+        }
+
+        /* design */
+        table {
+            border-collapse: collapse;
+        }
+
+        tr:nth-child(even) {
+            background: #EEE;
+        }
+
+        p.mytabs {
+            font-size: 16px;
+            margin: 1;
+        }
+
+    </style>
+    {% for jk in jks %}
+        <section class="section profile">
+            <div class="row">
+                <div class="col-xl-12">
+                    <div class="card">
+                        <div class="card-body pt-3">
+                            <div class="tab-content pt-2">
+                                <!-- Profile Edit Form -->
+                                <form>
+
+                                    <div class="row mb-3">
+                                        <label for="fullName" class="col-md-4 col-lg-4 col-form-label">Название
+                                            ЖК</label>
+                                        <div class="col-md-8 col-lg-8">
+                                            <input name="fullName" type="text" class="form-control" id="fullName"
+                                                   value="{{ jk.name }}">
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <label for="fullName" class="col-md-4 col-lg-4 col-form-label">Город</label>
+                                        <div class="col-md-8 col-lg-8">
+                                            <input name="fullName" type="text" class="form-control" id="fullName"
+                                                   value="{{ jk.city }}">
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <label for="fullName" class="col-md-4 col-lg-4 col-form-label">Адреса</label>
+                                        <div class="col-md-8 col-lg-8">
+                                            <ul class="list-group" id="addresses">
+                                                {% for i in addrs[jk.id] %}
+                                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                        <input name="fullName" type="text"
+                                                               class="form-control col-lg-10 address"
+                                                               id="fullName" value="{{ i }}" required><a href="#"
+                                                                                                         class="btn btn-danger delete col-lg-2"><span
+                                                            class="badge bg-danged rounded-pill">x</span></a>
+                                                    </li>
+                                                {% endfor %}
+                                            </ul><!-- End Default List group -->
+                                            <div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <label for="fullName" class="col-md-4 col-lg-4 col-form-label">ЖК на этой улице</label>
+                                        <div class="col-md-8 col-lg-8">
+                                            <ul class="list-group" id="addresses">
+                                                {% for i in streets[jk.id] %}
+                                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                        {{ i.name }}
+                                                    </li>
+                                                {% endfor %}
+                                            </ul><!-- End Default List group -->
+                                            <div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="text-center">
+                                        <button type="submit" class="btn btn-primary">Сохранить</button>
+                                    </div>
+                                </form><!-- End Profile Edit Form -->
+                            </div><!-- End Bordered Tabs -->
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+    {% endfor %}
+
+{% endblock %}

@@ -1,0 +1,118 @@
+<!-- templates/stats.html -->
+
+{% extends "base.html" %}
+
+{% block content %}
+    <style>
+
+        table {
+            margin-top: 40px;
+        }
+
+        th div {
+            margin-top: -40px;
+            position: absolute;
+        }
+
+        /* design */
+        table {
+            border-collapse: collapse;
+        }
+
+        tr:nth-child(even) {
+            background: #EEE;
+        }
+
+        .card-title {
+            font-size: 16px
+        }
+
+    </style>
+    <h1 class="title">Продажи</h1>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Общий баланс</h5>
+                    {{ summary }}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div>
+        <form method="POST" action="{{ url_for('chats.sales') }}" class="row">
+            <div class="col-lg-3">
+                <input class="form-control col" type="date" name="start" format="dd/mm/yyyy" value="{{ start }}">
+            </div>
+            <div class="col-lg-3">
+                <input class="form-control col" type="date" name="finish" format="dd/mm/yyyy" value="{{ finish }}">
+            </div>
+            <div class="col-lg-3">
+                <button class="btn btn-light">
+                    Отфильтровать по дате
+                </button>
+            </div>
+            <div class="col-lg-3">
+                <a href="{{ url_for('chats.sales') }}" class="btn btn-light">
+                    Сбросить фильтр
+                </a>
+            </div>
+        </form>
+    </div>
+    <div style="overflow-x:auto;">
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">Дата транзакции</th>
+                <th scope="col">DeviceID</th>
+                <th scope="col">OS</th>
+                <th scope="col">Жилец/Организация</th>
+                <th scope="col">Сумма транзакции / РУБ</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for i in data %}
+                <tr>
+                    <td>
+                        {{ datetime.fromtimestamp(i.date).strftime('%d.%m.%y') }}
+                    </td>
+                    <td>
+                        {{ i.id }}
+                    </td>
+                    <td>
+                        {{ i.OS }}
+                    </td>
+                    <td>
+                        {% if i.org == 1 %}
+                            Организация
+                        {% else %}
+                            Жилец
+                        {% endif %}
+                    </td>
+                    <td>
+                        {{ i.amount }}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+            <tfoot>
+            <tr>
+            <tr>
+                <td>
+                    <b>Итого:</b>
+                </td>
+                <td>
+                </td>
+                <td>
+                </td>
+                <td>
+                </td>
+                <td>
+                    {{ amount }}
+                </td>
+            </tr>
+            </tr>
+            </tfoot>
+        </table>
+    </div>
+{% endblock %}

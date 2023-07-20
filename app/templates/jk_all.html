@@ -1,0 +1,92 @@
+<!-- templates/stats.html -->
+
+{% extends "base.html" %}
+
+{% block content %}
+
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Жилищные комплексы</h5>
+
+            <!-- List group with custom content -->
+            <div class="row">
+                <div class="col-lg-6">
+                    <input onkeyup="myFunction()" id="jk" type="text" class="form-control"
+                           placeholder="Введите название ЖК" list="jk_name">
+                    <datalist id="jk_name">
+                        {% for jk in jks %}
+                            <option value="{{ jk.name }}"></option>
+                        {% endfor %}
+                    </datalist>
+                </div>
+                <div class="col-lg-6">
+                    <select class="form-select" id="city" onchange="myFunction_1()">
+                        <option value="ВСЕ" selected>ВСЕ</option>
+                        {% for city in cities %}
+                            <option value="{{ city[0] }}">{{ city[0] }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <ol class="list-group list-group-numbered" id="jk-list">
+                {% for jk in jks %}
+                    <a href="/jk/{{ jk.id }}">
+                        <li class="list-group-item justify-content-between align-items-start">
+                            <div class="ms-2 me-auto">
+                                <div class="fw-bold">{{ jk.name }}</div>
+                                <div class="my-class">{{ jk.city }}</div>
+                            </div>
+                        </li>
+                    </a>
+                {% endfor %}
+            </ol><!-- End with custom content -->
+
+        </div>
+    </div>
+    <script>
+        function myFunction() {
+            var input, filter, ul, li, a, i, txtValue;
+            input = document.getElementById("jk");
+            filter = input.value.toUpperCase();
+            ul = document.getElementById("jk-list");
+            li = ul.getElementsByTagName("li");
+            for (i = 0; i < li.length; i++) {
+                a = li[i].getElementsByClassName("fw-bold")[0];
+
+                txtValue = a.textContent || a.innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    li[i].style.setProperty('display', 'block', 'important');
+                } else {
+                    li[i].style.setProperty('display', 'none', 'important');
+                }
+            }
+        }
+
+        function myFunction_1() {
+            var input, filter, ul, li, a, i, txtValue;
+            input = document.getElementById("city");
+            filter = input.value.toUpperCase();
+            console.log(filter);
+            ul = document.getElementById("jk-list");
+            li = ul.getElementsByTagName("li");
+            if (filter != "ВСЕ") {
+                for (i = 0; i < li.length; i++) {
+                    a = li[i].getElementsByClassName("my-class")[0];
+
+                    txtValue = a.textContent || a.innerText;
+                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                        li[i].style.setProperty('display', 'block', 'important');
+                    } else {
+                        li[i].style.setProperty('display', 'none', 'important');
+                    }
+                }
+            } else {
+                for (i = 0; i < li.length; i++) {
+                    li[i].style.setProperty('display', 'block', 'important');
+                }
+            }
+        }
+    </script>
+
+{% endblock %}

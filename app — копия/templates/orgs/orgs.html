@@ -1,0 +1,117 @@
+<!-- templates/stats.html -->
+
+{% extends "base.html" %}
+
+{% block content %}
+    <style>
+
+        table {
+            margin-top: 40px;
+        }
+
+        th div {
+            margin-top: -40px;
+            position: absolute;
+        }
+
+        /* design */
+        table {
+            border-collapse: collapse;
+        }
+
+        tr:nth-child(even) {
+            background: #EEE;
+        }
+
+        .card-title {
+            font-size: 16px
+        }
+
+    </style>
+    <h1 class="title">Жильцы</h1>
+    <div>
+        <form method="POST" action="#" class="row">
+            <div class="col-lg-2">
+                <select class="form-select" id="city" onchange="myFunction_1()">
+                    <option value="ВСЕ" selected>ВСЕ</option>
+                    {% for city in cities %}
+                        <option value="{{ city[0] }}">{{ city[0] }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-lg-2">
+                <select class="form-select" id="city" onchange="myFunction_1()">
+                    <option value="ВСЕ" selected>ВСЕ</option>
+                    {% for city in jks %}
+                        <option value="{{ city[0] }}">{{ city[0] }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-lg-2">
+                <select class="form-select" id="city" onchange="myFunction_1()">
+                    <option value="ВСЕ" selected>ВСЕ</option>
+                    {% for city in addresses %}
+                        <option value="{{ city[0] }}">{{ city[0] }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-lg-2">
+                <button class="btn btn-light">
+                    Отфильтровать
+                </button>
+            </div>
+            <div class="col-lg-3">
+                <a href="#" class="btn btn-light">
+                    Сбросить фильтр
+                </a>
+            </div>
+        </form>
+    </div>
+    <div style="overflow-x:auto;">
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">Дата регистрации</th>
+                <th scope="col">DeviceID</th>
+                <th scope="col">OS</th>
+                <th scope="col">Количество баллов</th>
+                <th scope="col">Сумма всех транзакций/РУБ</th>
+                <th scope="col">Статус</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for i in data %}
+                <tr>
+                    <td>
+                        {{ datetime.fromtimestamp(i.date).strftime('%d.%m.%y') }}
+                    </td>
+                    <td>
+                        <a href="/user/1">{{ i.DeviceID }}</a>
+                    </td>
+                    <td>
+                        {{ i.OS }}
+                    </td>
+                    <td>
+                        20
+                    </td>
+                    <td>
+                        500
+                    </td>
+                    <td>
+                        {% if i.status == 'active' %}
+                            Активный
+                        {% elif i.status == 'inactive' %}
+                            Не активный
+                        {% elif i.status == 'blocked' %}
+                            Заблокирован
+                        {% elif i.status == 'admin' %}
+                            Администратор
+                        {% else %}
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

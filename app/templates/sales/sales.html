@@ -1,0 +1,223 @@
+<!-- templates/stats.html -->
+
+{% extends "base.html" %}
+
+{% block content %}
+    <style>
+        .card-title {
+            font-size: 16px;
+        }
+
+        .form-control {
+            font-size: 12px;
+        }
+
+        .btn {
+            font-size: 12px;
+        }
+
+
+        .tab.active {
+            background-color: #5071BF4D !important;
+        }
+
+
+        .tab:hover {
+            background-color: #5071BF4D !important;
+        }
+
+        tr.active {
+            background-color: #5071BF4D !important;
+        }
+
+        p {
+            font-size: 12px;
+        }
+
+
+        tr:hover {
+            background-color: #5071BF4D !important;
+        }
+
+        table {
+            margin-top: 40px;
+        }
+
+        th div {
+            margin-top: -40px;
+            position: absolute;
+        }
+
+        /* design */
+        table {
+            border-collapse: collapse;
+        }
+
+        tr:nth-child(even) {
+            background: #EEE;
+        }
+
+        p.mytabs {
+            font-size: 16px;
+            margin: 1;
+        }
+
+    </style>
+    <h1 class="title">Продажи</h1>
+    <div class="row">
+        <div class="col-lg-3">
+            <div class="card tab {% if org in [1] %} active {% endif %}"
+                 onclick="window.location.href='{{ url_for("main.sales_org") }}'; return false">
+                <div class="">
+                    <p class="mytabs"></p>
+                    <p class="mytabs">Организации</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3">
+            <div class="card tab {% if org in [0] %} active {% endif %}"
+                 onclick="window.location.href='{{ url_for("main.sales_users") }}'; return false">
+                <div class="">
+                    <p class="mytabs"></p>
+                    <p class="mytabs">Жильцы</p>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xl-12">
+            {% if org %}
+                <form method="POST" action="{{ url_for('main.sales_org') }}" class="row">
+            {% else %}
+                <form method="POST" action="{{ url_for('main.sales_users') }}" class="row">
+            {% endif %}
+            <div class="col-lg-3">
+                <input class="form-control col" type="date" name="start" format="dd/mm/yyyy" value="{{ start }}">
+            </div>
+            <div class="col-lg-3">
+                <input class="form-control col" type="date" name="finish" format="dd/mm/yyyy" value="{{ finish }}">
+            </div>
+            <div class="col-lg-3">
+                <button class="btn btn-light">
+                    Отфильтровать по дате
+                </button>
+            </div>
+            <div class="col-lg-3">
+                {% if org %}
+                    <a href="{{ url_for('main.sales_org') }}" class="btn btn-light">
+                        Сбросить фильтр
+                    </a>
+                {% else %}
+                    <a href="{{ url_for('main.sales_users') }}" class="btn btn-light">
+                        Сбросить фильтр
+                    </a>
+                {% endif %}
+            </div>
+            </form>
+        </div>
+        <div class="card" style="overflow-x:auto;">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">{% if org %} Дата транзакции {% else %} Дата регистриции {% endif %}</th>
+
+                    <th scope="col">{% if org %} ФИО {% else %} ФИ {% endif %}</th>
+                    <th scope="col">Телефон</th>
+                    {% if org %}
+                        <th scope="col"> Организация</th>
+                        <th scope="col"> ИНН</th>
+                    {% endif %}
+                    <th scope="col">ЖК</th>
+                    <th scope="col">{% if org %}Сумма транзакции, РУБ{% else %}Баллы{% endif %}</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for i in data %}
+                    {% if i.id != current_user.id %}
+                        <tr onclick="window.location.href='/user/{% if org %}{{ i.userId }}{% else %}{{ i.id }}{% endif %}'; return false">
+                            <td>
+                                {{ i.id }}
+                            </td>
+                            <td>
+                                {% if org %}
+                                    {{ i.timestamp.strftime('%d.%m.%y') }}
+                                {% else %}
+                                    {{ datetime.fromtimestamp(i.registered).strftime('%d.%m.%y') }}
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if org %}
+                                    {{ User.query.filter_by(id=i.userId).first().surname }}
+                                    {{ User.query.filter_by(id=i.userId).first().name }}
+                                    {{ User.query.filter_by(id=i.userId).first().second_name }}
+                                {% else %}
+                                    {{ i.surname }}
+                                    {{ i.name }}
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if org %}
+                                    {{ User.query.filter_by(id=i.userId).first().phone }}
+                                {% else %}
+                                    {{ i.phone }}
+                                {% endif %}
+                            </td>
+
+                            {% if org %}
+                                <td>
+                                    {{ User.query.filter_by(id=i.userId).first().org_name }}
+                                </td>
+                                <td>
+                                    {{ User.query.filter_by(id=i.userId).first().inn }}
+                                </td>
+                                <td>
+                                    {{ JK.query.filter_by(id=User.query.filter_by(id=i.userId).first().jk).first().name }}
+                                </td>
+                            {% else %}
+                                <td>
+                                    {{ JK.query.filter_by(id=i.jk).first().name }}
+                                </td>
+                            {% endif %}
+                            <td>
+                                {% if org %}
+                                    {{ i.amount }}
+                                {% else %}
+                                    {{ i.points }}
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endif %}
+                {% endfor %}
+                </tbody>
+                {% if org %}
+                    <tfoot>
+                    <tr>
+                    <tr>
+                        <td>
+                            <b>Итого:</b>
+                        </td>
+                        <td>
+                        </td>
+                        <td>
+                        </td>
+                        <td>
+                        </td>
+                        <td>
+                        </td>
+                        <td>
+                        </td>
+                        <td>
+                        </td>
+                        <td>
+                            {{ amount }}
+                        </td>
+                    </tr>
+                    </tfoot>
+                {% endif %}
+            </table>
+        </div>
+    </div>
+
+{% endblock %}
